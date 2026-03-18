@@ -355,7 +355,7 @@ const HowItWorks: React.FC = () => {
         {/* Why Choose WHOOSH */}
         <section className="py-8 sm:py-10 md:py-12 lg:py-16">
           <div className="container mx-auto px-4">
-            <div className="comic-panel bg-white/95 p-8 border-4 border-black shadow-comic-lg">
+           <div className="comic-panel bg-white/95 p-8 border-4 border-black shadow-comic-lg">
               <div
                 className="hero-text text-3xl md:text-5xl font-comic text-center mb-12"
                 dangerouslySetInnerHTML={{
@@ -375,6 +375,7 @@ const HowItWorks: React.FC = () => {
                 </div>
               ))}
             </div>
+            <div className="max-w-4xl mx-auto text-[12px] mt-12"><p><strong>Representative Example: </strong>Borrowing £7,000 over 60 months at a representative APR of 21.9% (fixed), 60 monthly payments of £192.93. Total amount payable: £11,575.80. Total cost of credit: £4,575.80. This is an example only, all finance subject to status. Example only. Lender fees may apply. All finance subject to status.</p></div>
             </div>
           </div>
         </section>

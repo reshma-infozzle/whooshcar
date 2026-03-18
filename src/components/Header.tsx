@@ -130,11 +130,11 @@ export const Header = () => {
                   className="flex flex-col items-center leading-tight"
                 >
                   <span className="text-base font-bold">
-                    {navData?.button_text || "Get Quote"}
+                    {navData?.button_text || "Get A Quote"}
                   </span>
 
                   <span className="text-[14px] font-normal opacity-90">
-                    10.9% Rep. APR (From 9.9%)
+                    10.9% Rep. APR
                   </span>
                 </Link>
               </Button>
@@ -183,11 +183,11 @@ export const Header = () => {
                       className="flex flex-col items-center justify-center leading-none"
                     >
                       <span className="text-base font-bold leading-none">
-                        {navData?.button_text || "Get Quote"}
+                        {navData?.button_text || "Get A Quote"}
                       </span>
 
                       <span className="text-[12px] font-normal leading-none mt-1">
-                        10.9% Rep. APR (From 9.9%)
+                        10.9% Rep. APR
                       </span>
                     </Link>
                   </Button>

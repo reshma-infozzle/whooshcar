@@ -1447,9 +1447,8 @@ const mapHousingStatus = (status?: string) => {
                               />
                             </FormControl>
                             <FormLabel className="text-sm font-body leading-relaxed mt-0">
-                              I consent to a <strong>soft credit search</strong> being
-                              conducted to check my eligibility. I understand this will not
-                              impact my credit score. I acknowledge that if I choose to proceed with a specific lender later, a hard credit search will be required, but I will be notified before this happens.
+                              I consent to a soft credit search being conducted to check my eligibility. 
+                              This will not impact my credit score. If I choose to proceed with a lender, the lender may carry out a hard credit search as part of their application process.
                             </FormLabel>
                           </FormItem>
                         )}

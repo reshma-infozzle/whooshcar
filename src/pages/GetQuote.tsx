@@ -138,7 +138,7 @@ const GetQuote = () => {
             <span className="text-xs sm:text-sm font-body text-foreground">Secure & Encrypted</span>
           </div>
           <div className="bg-primary/10 px-4 py-2 rounded-lg border-2 border-foreground comic-panel">
-            <span className="text-xs sm:text-sm font-body text-foreground">All Credit Types Considered</span>
+            <span className="text-xs sm:text-sm font-body text-foreground">Most Credit Types Considered</span>
           </div>
           <div className="bg-primary/10 px-4 py-2 rounded-lg border-2 border-foreground comic-panel">
             <span className="text-xs sm:text-sm font-body text-foreground">No Upfront Fees</span>
