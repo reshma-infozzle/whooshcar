@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,125 +6,270 @@ import { Button } from "@/components/ui/button";
 import { Car, Shield, Calculator, Clock, CheckCircle, Percent } from "lucide-react";
 import { Link } from "react-router-dom";
 
+
+// --------------------------------------------------
+// SHIMMER LOADING SKELETON (NO BORDERS)
+// --------------------------------------------------
+const Shimmer = () => (
+  <div className="min-h-screen bg-background animate-pulse">
+    <Header />
+
+    <main className="pt-24">
+
+      {/* HERO SECTION */}
+      <section className="py-12 bg-gradient-to-br from-primary/10 to-secondary/10">
+        <div className="container mx-auto px-4 text-center">
+          <div className="w-3/4 h-8 bg-gray-200 rounded-lg mx-auto mb-4" />
+          <div className="w-1/2 h-6 bg-gray-200 rounded-lg mx-auto mb-8" />
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="w-40 h-12 bg-gray-200 rounded-lg" />
+            <div className="w-40 h-12 bg-gray-200 rounded-lg" />
+          </div>
+        </div>
+      </section>
+
+      {/* FINANCE TYPES */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="w-1/3 h-8 bg-gray-200 rounded-lg mx-auto mb-10" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-gray-200 rounded-xl p-6">
+                <div className="w-1/2 h-6 bg-gray-300 rounded mb-6 mx-auto" />
+                <div className="space-y-3">
+                  <div className="w-3/4 h-3 bg-gray-300 rounded mx-auto" />
+                  <div className="w-2/3 h-3 bg-gray-300 rounded mx-auto" />
+                  <div className="w-4/5 h-3 bg-gray-300 rounded mx-auto" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFITS */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="w-1/3 h-8 bg-gray-200 rounded-lg mx-auto mb-10" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="p-6">
+                <div className="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4" />
+                <div className="w-1/2 h-4 bg-gray-300 rounded mx-auto mb-3" />
+                <div className="w-3/4 h-3 bg-gray-300 rounded mx-auto" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* RATES */}
+      <section className="py-16">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="w-1/2 h-8 bg-gray-200 rounded-lg mx-auto mb-10" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-gray-200 rounded-xl p-8 text-center">
+                <div className="w-16 h-8 bg-gray-300 rounded mx-auto mb-4" />
+                <div className="w-16 h-4 bg-gray-300 rounded mx-auto mb-3" />
+                <div className="w-3/4 h-3 bg-gray-300 rounded mx-auto" />
+              </div>
+            ))}
+          </div>
+
+          <div className="w-full h-3 bg-gray-200 rounded mx-auto mt-8" />
+          <div className="w-4/5 h-3 bg-gray-200 rounded mx-auto mt-3" />
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-16 bg-gradient-to-r from-primary to-secondary">
+        <div className="container mx-auto px-4 text-center">
+          <div className="w-1/2 h-8 bg-gray-100 rounded-lg mx-auto mb-6" />
+          <div className="w-1/3 h-4 bg-gray-100 rounded-lg mx-auto mb-8" />
+          <div className="w-48 h-12 bg-gray-100 rounded-lg mx-auto" />
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+);
+
+
+// --------------------------------------------------
+// MAIN COMPONENT — WITH API DYNAMIC DATA
+// --------------------------------------------------
 const CarFinance = () => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAPI = async () => {
+      try {
+        const res = await fetch("https://admin.whooshcar.testingweblink.com/api/CarFinance");
+        const json = await res.json();
+        setData(json.data[0]);
+      } catch (e) {
+        console.error("API Error:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAPI();
+  }, []);
+
+  if (loading || !data) return <Shimmer />;
+
+
+  // DYNAMIC FINANCE TYPE DATA
   const financeTypes = [
     {
-      title: "Hire Purchase (HP)",
-      description: "Spread the cost with fixed monthly payments, and own the car outright at the end.",
-      features: ["Own the car at the end", "Fixed monthly payments", "No mileage restrictions", "Simple and straightforward"]
+      title: data.hire_purchase_title,
+      description: data.hire_purchase_description,
+      features: data.hire_purchase_points || [],
     },
     {
-      title: "Personal Contract Purchase (PCP)",
-      description: "Lower monthly payments with the option to buy, return, or exchange your car at the end.",
-      features: ["Lower monthly payments", "Flexible end options", "Mileage allowance", "Optional final payment"]
+      title: data.contract_purchase_title,
+      description: data.contract_purchase_description,
+      features: data.contract_purchase_points || [],
     },
     {
-      title: "Personal Loan",
-      description: "Borrow money to buy your car outright, then pay back in fixed monthly installments.",
-      features: ["Immediate ownership", "No restrictions", "Competitive rates", "Flexible terms"],
-      popular: false
-    }
+      title: data.personal_loan_title,
+      description: data.personal_loan_description,
+      features: data.personal_loan_points || [],
+    },
   ];
+
 
   const benefits = [
     {
       icon: Shield,
-      title: "FCA Regulated",
-      description: "We're fully regulated by the Financial Conduct Authority for your protection."
+      title: data.fca_regulated_title,
+      description: data.fca_regulated_description,
     },
     {
       icon: Percent,
-      title: "Competitive Rates",
-      description: "Access to exclusive rates from 3.9% APR through our network of lenders."
+      title: data.compititive_rates_title,
+      description: data.compititive_rates_description,
     },
     {
       icon: Clock,
-      title: "Quick Decisions",
-      description: "Get a decision in minutes and funding within 24 hours of acceptance."
+      title: data.quick_decision_title,
+      description: data.quick_decision_description,
     },
     {
       icon: Calculator,
-      title: "Flexible Terms",
-      description: "Choose from 12 to 84 months repayment terms to suit your budget."
-    }
+      title: data.flexible_terms_title,
+      description: data.flexible_terms_description,
+    },
   ];
 
+
+  // --------------------------------------------------
+  // FINAL UI
+  // --------------------------------------------------
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="pt-24">
-        {/* Hero Section */}
-        <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-primary/10 to-secondary/10">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-comic font-black text-foreground mb-6">
-                Car <span className="text-primary">FINANCE</span>
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                Find the perfect car finance deal with rates from 3.9% APR. 
-                Compare deals from 30+ lenders and get approved in minutes.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/calculator">
-                  <Button size="lg" className="text-lg px-8">
-                    <Calculator className="w-5 h-5 mr-2" />
-                    Calculate Payments
-                  </Button>
-                </Link>
-                <Link to="/apply">
-                  <Button size="lg" variant="outline" className="text-lg px-8">
-                    <Car className="w-5 h-5 mr-2" />
-                    Apply Now
-                  </Button>
-                </Link>
-              </div>
+
+        {/* HERO */}
+        <section className="py-12 bg-gradient-to-br from-primary/10 to-secondary/10">
+          <div className="container mx-auto px-4 text-center max-w-4xl">
+            <h1
+              className="hero-text text-4xl md:text-6xl font-comic font-black text-foreground mb-6"
+              dangerouslySetInnerHTML={{ __html: data.car_finance_banner_title }}
+            />
+
+            <p className="text-xl text-muted-foreground mb-8">
+              {data.car_finance_description}
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to={data.payments_button_url}>
+                <Button size="lg" className="text-lg px-8">
+                  <Calculator className="mr-2" />
+                  {data.payments_button_text}
+                </Button>
+              </Link>
+
+              <Link to={data.apply_now_button_url}>
+                <Button size="lg" variant="outline" className="text-lg px-8">
+                  <Car className="mr-2" />
+                  {data.apply_now_button_text}
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Finance Types Section */}
-        <section className="py-8 sm:py-10 md:py-12 lg:py-16">
-          <div className="container mx-auto px-2 sm:px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-comic font-black text-center mb-8 sm:mb-10 md:mb-12 px-2">
-              Choose Your <span className="text-primary">Finance Type</span>
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-              {financeTypes.map((type, index) => (
-                <Card key={index} className="relative comic-panel hover:shadow-lg transition-all duration-300">
+
+        {/* FINANCE TYPES */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <h2
+              className="hero-text text-4xl font-comic font-black text-center mb-12"
+              dangerouslySetInnerHTML={{ __html: data.finance_type_title }}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {financeTypes.map((type, i) => (
+                <Card key={i} className="comic-panel">
                   <CardHeader>
-                    <CardTitle className="font-comic text-xl text-center">{type.title}</CardTitle>
-                    <CardContent className="px-0">
-                      <p className="text-muted-foreground text-center mb-6">{type.description}</p>
-                      <ul className="space-y-3">
-                        {type.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                            <span className="text-sm">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
+                    <CardTitle className="font-comic text-xl text-center hero-text">
+                      {type.title}
+                    </CardTitle>
                   </CardHeader>
+
+                  <CardContent>
+  <div
+    className="text-center text-muted-foreground mb-6 custom-list-style"
+    dangerouslySetInnerHTML={{ __html: type.description }}
+  />
+
+  {/* If the backend still gives features array, keep rendering it */}
+  {type.features?.length > 0 && (
+    <ul className="space-y-3">
+      {type.features.map((f, idx) => (
+        <li key={idx} className="flex items-center gap-2">
+          <CheckCircle className="text-primary" />
+          {f}
+        </li>
+      ))}
+    </ul>
+  )}
+</CardContent>
                 </Card>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Benefits Section */}
-        <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-muted/30">
-          <div className="container mx-auto px-2 sm:px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-comic font-black text-center mb-8 sm:mb-10 md:mb-12 px-2">
-              Why Choose Our <span className="text-primary">Car Finance?</span>
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-              {benefits.map((benefit, index) => (
-                <div key={index} className="text-center">
-                  <div className="comic-panel bg-background p-4 sm:p-6 mb-3 sm:mb-4">
-                    <benefit.icon className="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12 text-primary mx-auto mb-3 sm:mb-4" />
-                    <h3 className="font-comic font-bold text-base sm:text-lg mb-2">{benefit.title}</h3>
-                    <p className="text-muted-foreground text-sm sm:text-sm">{benefit.description}</p>
+
+        {/* BENEFITS */}
+        <section className="py-16 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <h2
+              className="hero-text text-4xl font-comic font-black text-center mb-12"
+              dangerouslySetInnerHTML={{ __html: data.why_choose_title }}
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {benefits.map((b, i) => (
+                <div key={i} className="text-center">
+                  <div className="comic-panel p-6 bg-background">
+                    <b.icon className="w-12 h-12 text-primary mx-auto mb-4" />
+                    <h3 className="font-comic font-bold text-lg hero-text">
+                      {b.title}
+                    </h3>
+                    <p className="text-muted-foreground">{b.description}</p>
                   </div>
                 </div>
               ))}
@@ -131,62 +277,93 @@ const CarFinance = () => {
           </div>
         </section>
 
-        {/* Rates Section */}
-        <section className="py-8 sm:py-10 md:py-12 lg:py-16">
-          <div className="container mx-auto px-2 sm:px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-comic font-black text-center mb-8 sm:mb-10 md:mb-12 px-2">
-                Representative <span className="text-primary">Rates</span>
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12">
-                <div className="text-center comic-panel bg-primary/5 p-4 sm:p-6 md:p-8">
-                  <div className="text-3xl sm:text-4xl font-comic font-black text-primary mb-2">3.9%</div>
-                  <div className="text-base sm:text-lg font-semibold text-foreground">Representative APR</div>
-                  <div className="text-muted-foreground mt-2 text-sm sm:text-base">For customers with excellent credit</div>
+
+        {/* RATES */}
+        <section className="py-16">
+          <div className="container mx-auto max-w-5xl px-4">
+
+            <h2
+              className="hero-text text-4xl font-comic font-black text-center mb-12"
+              dangerouslySetInnerHTML={{ __html: data.representative_rates_title }}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+              <div className="comic-panel text-center p-8 bg-primary/5">
+                <div className="text-4xl font-comic text-primary mb-2 hero-text">
+                  {data.apr_value}
                 </div>
-                <div className="text-center comic-panel bg-secondary/5 p-4 sm:p-6 md:p-8">
-                  <div className="text-3xl sm:text-4xl font-comic font-black text-secondary mb-2">£0</div>
-                  <div className="text-base sm:text-lg font-semibold text-foreground">Application Fee</div>
-                  <div className="text-muted-foreground mt-2 text-sm sm:text-base">No upfront costs or hidden charges</div>
-                </div>
-                <div className="text-center comic-panel bg-accent/5 p-4 sm:p-6 md:p-8">
-                  <div className="text-3xl sm:text-4xl font-comic font-black text-accent mb-2">84</div>
-                  <div className="text-base sm:text-lg font-semibold text-foreground">Max Term (Months)</div>
-                  <div className="text-muted-foreground mt-2 text-sm sm:text-base">Flexible repayment periods</div>
-                </div>
+                <h4 className="font-bold">{data.apr_title}</h4>
+                <p className="text-muted-foreground">{data.apr_description}</p>
               </div>
-              
-              <div className="text-center text-xs sm:text-sm text-muted-foreground px-2">
-                <p className="mb-2">
-                  Representative example: Borrowing £10,000 over 48 months with a representative APR of 3.9%, 
-                  you would make 48 monthly payments of £226.58. Total amount payable £10,876.
-                </p>
-                <p>
-                  The rate you'll be offered will depend on your personal circumstances and credit history. 
-                  Terms and conditions apply.
-                </p>
+
+              <div className="comic-panel text-center p-8 bg-secondary/5">
+                <div className="text-4xl font-comic text-secondary mb-2 hero-text">
+                  {data.application_fee_value}
+                </div>
+                <h4 className="font-bold">{data.application_fee_title}</h4>
+                <p className="text-muted-foreground">{data.application_fee_description}</p>
               </div>
+
+              <div className="comic-panel text-center p-8 bg-accent/5">
+                <div className="text-4xl font-comic text-accent mb-2 hero-text">
+                  {data.maxterm_month_value}
+                </div>
+                <h4 className="font-bold">{data.maxterm_month_title}</h4>
+                <p className="text-muted-foreground">{data.maxterm_month_description}</p>
+              </div>
+
             </div>
+
+            <p className="text-center text-muted-foreground mt-6 text-sm">
+              {data.representative_example}
+            </p>
+
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-8 sm:py-10 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-r from-primary to-secondary text-primary-foreground">
-          <div className="container mx-auto px-2 sm:px-4 text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-comic font-black mb-4 sm:mb-6 px-2">
-              Ready to Finance Your Car?
+
+        {/* CTA */}
+        <section className="py-16 bg-gradient-to-r from-primary to-secondary text-primary-foreground">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="hero-text text-4xl font-comic font-black mb-4">
+              {data.ready_finance_title}
             </h2>
-            <p className="text-lg sm:text-xl mb-6 sm:mb-8 opacity-90 px-2">
-              Get a personalised quote in just 2 minutes without affecting your credit score.
-            </p>
-            <Link to="/apply">
-              <Button size="lg" variant="secondary" className="text-lg px-8">
-                <Calculator className="w-5 h-5 mr-2" />
-                Get Your Quote
+
+            <p className="text-xl mb-8">{data.ready_finance_description}</p>
+
+            
+              {/* <Button size="lg" variant="secondary" className="text-lg px-8">
+                <Link to={data.get_quote_button_url}>
+
+                  <Calculator className="mr-2" />
+                  {data.get_quote_button_text}
+                </Link>
+              </Button> */}
+
+              <Button
+                asChild
+                variant="secondary"
+                className="w-full sm:w-auto h-auto px-6 py-4 shadow-[4px_4px_0px_rgb(0_0_0_/_1)]"
+              >
+                <Link
+                  to={data.get_quote_button_url}
+                  className="flex flex-col items-center justify-center gap-1"
+                >
+                  <div className="flex items-center gap-2 font-bold text-base sm:text-lg md:text-xl">
+                    <Calculator className="mr-2" />
+                    {data.get_quote_button_text}
+                  </div>
+
+                  <span className="text-xs font-medium leading-none">
+                    10.9% Rep. APR - Credit Broker, Not a Lender
+                  </span>
+                </Link>
               </Button>
-            </Link>
+            
           </div>
         </section>
+
       </main>
 
       <Footer />

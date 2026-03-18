@@ -2,10 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "@/components/ScrollToTop";
-
 import Index from "./pages/Index";
 import AboutUs from "./pages/AboutUs";
 import FAQ from "./pages/FAQ";
@@ -30,13 +29,10 @@ import Contact from "./pages/Contact";
 import Sitemap from "./pages/Sitemap";
 import Apply from "./pages/Apply";
 import ApplicationComplete from "./pages/ApplicationComplete";
-import ApplicationSubmitted from "./pages/ApplicationSubmitted";
 import Blog from "./pages/Blog";
 import WhooshConcepts from "./pages/WhooshConcepts";
 import NotFound from "@/pages/NotFound";
 import BlogPost from "@/pages/BlogPost";
-import MarketingPreferences from "./pages/MarketingPreferences";
-import GetQuote from "./pages/GetQuote";
 
 const queryClient = new QueryClient();
 
@@ -46,8 +42,9 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <ScrollToTop />
-        <Routes>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/faq" element={<FAQ />} />
@@ -72,15 +69,13 @@ const App = () => (
           <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/apply" element={<Apply />} />
           <Route path="/application-complete" element={<ApplicationComplete />} />
-          <Route path="/application-submitted" element={<ApplicationSubmitted />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/concepts" element={<WhooshConcepts />} />
-          <Route path="/marketing-preferences" element={<MarketingPreferences />} />
-          <Route path="/get-quote" element={<GetQuote />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
-        </Routes>
+          </Routes>
+        </BrowserRouter>
       </TooltipProvider>
     </HelmetProvider>
   </QueryClientProvider>

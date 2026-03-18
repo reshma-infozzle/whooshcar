@@ -43,10 +43,10 @@ export const applyFormSchema = z.object({
       const monthDiff = today.getMonth() - birthDate.getMonth();
       
       if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        return age - 1 >= 18;
+        return age - 1 >= 21;
       }
-      return age >= 18;
-    }, "You must be at least 18 years old to apply"),
+      return age >= 21;
+    }, "You must be at least 21 years old to apply"),
   
   // Step 9
   ukResident: z.string().min(1, "Please confirm your UK residency status"),
@@ -71,9 +71,6 @@ export const applyFormSchema = z.object({
     .min(1, "Email is required")
     .email("Please enter a valid email address")
     .max(100, "Email must be less than 100 characters"),
-  phone: z.string()
-    .min(1, "Phone number is required")
-    .regex(/^(?:(?:\+44\s?|0)(?:\d\s?){10})$/, "Please enter a valid UK phone number"),
   
   // Step 12
   maritalStatus: z.string().min(1, "Please select your marital status"),
@@ -91,16 +88,24 @@ export const applyFormSchema = z.object({
   })).min(1, "At least one address is required"),
   
   // Step 14 - Consents
-  creditCheckConsent: z.boolean().refine((val) => val === true, {
-    message: "You must consent to a soft search to proceed"
-  }),
-  termsConsent: z.boolean().refine((val) => val === true, {
-    message: "You must agree to the terms and conditions"
-  }),
-  privacyConsent: z.boolean().refine((val) => val === true, {
-    message: "You must agree to the privacy policy"
-  }),
-  marketingConsent: z.boolean().optional(),
+  partnerConsent: z.boolean(),
+  creditConsent: z.boolean(),
+  termsConsent: z.boolean(),
+
+
+  // creditCheckConsent: z.boolean().refine((val) => val === true, {
+  //   message: "You must consent to a soft search to proceed"
+  // }),
+  // creditSearchConsent: z.boolean().refine((val) => val === true, {
+  //   message: "You must consent to a full credit search to proceed"
+  // }),
+  // termsConsent: z.boolean().refine((val) => val === true, {
+  //   message: "You must agree to the terms and conditions"
+  // }),
+  // privacyConsent: z.boolean().refine((val) => val === true, {
+  //   message: "You must agree to the privacy policy"
+  // }),
+  // marketingConsent: z.boolean().optional(),
 }).superRefine((data, ctx) => {
   // Calculate total years from address history
   const totalYears = data.addressHistory.reduce((sum, addr) => {
@@ -119,13 +124,13 @@ export const applyFormSchema = z.object({
   // If full-time or part-time employed, employer details are required
   if (data.employmentStatus === "Full-time Employed" || 
       data.employmentStatus === "Part-time Employed") {
-    if (!data.employerName || data.employerName.length < 2) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Employer name is required (minimum 2 characters)",
-        path: ["employerName"],
-      });
-    }
+    // if (!data.employerName || data.employerName.length < 2) {
+    //   ctx.addIssue({
+    //     code: z.ZodIssueCode.custom,
+    //     message: "Employer name is required (minimum 2 characters)",
+    //     path: ["employerName"],
+    //   });
+    // }
     if (!data.jobTitle || data.jobTitle.length < 2) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

@@ -18,8 +18,6 @@ import {
   BarChart3,
   Target,
   Percent,
-  Lightbulb,
-  Rocket
 } from "lucide-react";
 
 const API_URL = "https://admin.whooshcar.testingweblink.com/api/lenders";
@@ -30,42 +28,6 @@ const IMAGE_BASE_URL = "https://admin.whooshcarfinance.co.uk/storage/";
 export default function LendersPresentation() {
   const [page, setPage] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-
-    // Helper functions for Market Coverage parsing
-  const extractCities = (htmlString: string) => {
-    if (!htmlString) return [];
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlString;
-    return Array.from(tempDiv.querySelectorAll('p'))
-      .map((p: Element) => (p.textContent || '').trim())
-      .filter(Boolean);
-  };
-
-  const extractAdvantages = (htmlString: string) => {
-    if (!htmlString) return [];
-
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlString;
-
-    return Array.from(tempDiv.querySelectorAll('li'))
-      .map((li) => {
-        const text = (li.textContent || '').trim();
-        // Remove existing bullet if present (•, -, *, etc.)
-        return text.replace(/^[\s•\-\*]+/, '').trim();
-      })
-      .filter(Boolean)
-      .map(text => `• ${text}`);   // Add clean bullet
-  };
-
-  const extractGrowthItems = (htmlString: string) => {
-    if (!htmlString) return [];
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlString;
-    return Array.from(tempDiv.querySelectorAll('li p'))
-      .map((p: Element) => (p.textContent || '').trim().replace(/^•\s*/, ''))
-      .filter(Boolean);
-  };
-
 
   useEffect(() => {
     fetch(API_URL)
@@ -90,12 +52,6 @@ export default function LendersPresentation() {
 
   if (!page) return null;
 
-  const cities = extractCities(page.major_market_list || '');
-  const advantages = extractAdvantages(page.strategic_advantage_list || '');
-  const year1Items = extractGrowthItems(page.year_1_description || '');
-  const year2Items = extractGrowthItems(page.year_2_description || '');
-  const year3Items = extractGrowthItems(page.year_3_description || '');
-  
   return (
     <>
       <Helmet>
@@ -448,11 +404,11 @@ export default function LendersPresentation() {
           // className="bg-[#FFFBEA] border-[3px] border-black rounded-[18px] px-6 py-8 text-center flex flex-col"
         >
           {/* Avatar */}
-          <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border-4 border-primary/20">
-            <img 
+          <div className="w-[140px] h-[140px] mx-auto mb-4 rounded-full bg-white flex items-center justify-center border-[3px] border-[#F4C400]">
+            <img
               src={`${import.meta.env.VITE_IMAGE_BASE_URL}/${member.team_member_image}`}
-              alt={`${member.name} - ${member.role}`}
-              className="w-full h-full object-cover"
+              alt={member.team_member_name}
+              className="w-[120px] h-[120px] object-contain"
             />
           </div>
 
@@ -988,31 +944,10 @@ export default function LendersPresentation() {
         </div>
 
         {/* HTML CONTENT */}
-      <div
-        className="
-          text-[15px] leading-[1.7] text-gray-700 font-sans
-
-          [&_p]:mb-3
-
-          /* Headings */
-          [&_p>strong]:block
-          [&_p>strong]:text-[16px]
-          [&_p>strong]:font-bold
-          [&_p>strong]:text-gray-900
-
-          /* Mitigation inline */
-          [&_p:nth-child(even)>strong]:inline
-          [&_p:nth-child(even)>strong]:mr-1.5
-
-          /* Divider ONLY before sections except first */
-          [&_p:nth-child(odd):not(:first-child)]:mt-6
-          [&_p:nth-child(odd):not(:first-child)]:pt-6
-          [&_p:nth-child(odd):not(:first-child)]:border-t
-          [&_p:nth-child(odd):not(:first-child)]:border-gray-300
-        "
-        dangerouslySetInnerHTML={{ __html: page.key_risk_description }}
-      />
-
+        <div
+          className="risk-html"
+          dangerouslySetInnerHTML={{ __html: page.key_risk_description }}
+        />
       </div>
     )}
 
@@ -1039,148 +974,36 @@ export default function LendersPresentation() {
 
 
 
-{/* Market Coverage */}
-        <section className="mb-16">
-          <div className="comic-panel p-8">
-            <h2 className="text-3xl font-comic text-center mb-8 text-foreground">
-              {page.nationwide_market_title}
-            </h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-xl font-bold mb-4">{page.major_market_title}</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {cities.map((city: string) => (
-                    <div key={city} className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-primary" />
-                      <span>{city}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-4">{page.strategic_advantage_title}</h3>
-                <ul className="space-y-2 text-muted-foreground">
-                  {advantages.map((advantage: string, index: number) => (
-                    <li key={index}>{advantage}</li>
-                  ))}
-                </ul>
-              </div>
+
+
+
+        {/* CONTACT */}
+        <section className="text-center">
+          <h2 className="text-3xl font-comic mb-6">
+            {page.lets_build_title}
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            {page.lets_build_description}
+          </p>
+
+          <div className="space-y-2">
+            <div className="flex justify-center gap-2">
+              <Phone className="w-4 h-4" /> {page.contact_number}
+            </div>
+            <div className="flex justify-center gap-2">
+              <Mail className="w-4 h-4" /> {page.email_address}
+            </div>
+            <div className="flex justify-center gap-2">
+              <MapPin className="w-4 h-4" /> {page.head_office_description}
             </div>
           </div>
         </section>
 
-{/* 3-Year Growth Strategy */}
-    <section className="mb-16">
-      <div className="comic-panel p-8">
-        <h2 className="text-3xl font-comic text-center mb-8 text-foreground">
-          {page['3_year_growth_title']}
-        </h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div>
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Lightbulb className="w-6 h-6 text-primary" />
-              {page.year_1_title}
-            </h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              {year1Items.map((item: string, index: number) => (
-                <li key={index}>• {item}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <TrendingUp className="w-6 h-6 text-primary" />
-              {page.year_2_title}
-            </h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              {year2Items.map((item: string, index: number) => (
-                <li key={index}>• {item}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Rocket className="w-6 h-6 text-primary" />
-              {page.year_3_title}
-            </h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              {year3Items.map((item: string, index: number) => (
-                <li key={index}>• {item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-{/* CONTACT */}
-<section className="text-center">
-  <div className="comic-panel p-8 max-w-4xl mx-auto">
-    <h2 className="text-3xl font-comic mb-6 text-foreground">
-      {page.lets_build_title}
-    </h2>
-    <p className="text-lg text-muted-foreground mb-8">
-      {page.lets_build_description}
-    </p>
-    
-    <div className="grid md:grid-cols-2 gap-8 mb-8">
-      <div className="text-center">
-        <h3 className="font-bold mb-4">{page.partnership_enquiries_title}</h3>
-        <div className="space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            <Phone className="w-4 h-4" />
-            <span>{page.contact_number}</span>
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <Mail className="w-4 h-4" />
-            <span>{page.email_address}</span>
-          </div>
-        </div>
-      </div>
-      <div className="text-center">
-        <h3 className="font-bold mb-4">{page.head_office_title}</h3>
-        <div className="text-sm text-muted-foreground whitespace-pre-line">
-          {page.head_office_description}
-        </div>
-      </div>
-    </div>
-
-    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-      {/* <PartnerApplicationDialog>
-        <Button size="lg" className="text-lg px-8" asChild>
-          <a href={page.express_interest_button_url}>
-            <Handshake className="w-5 h-5 mr-2" />
-            {page.express_interest_button_text}
-          </a>
-        </Button>
-      </PartnerApplicationDialog>
-      
-      <Button 
-        variant="outline" 
-        size="lg" 
-        className="text-lg px-8"
-        onClick={handleDownloadPDF}
-        disabled={isGeneratingPDF}
-      >
-        <FileCheck className="w-5 h-5 mr-2" />
-        {isGeneratingPDF ? "Generating PDF..." : page.download_full_button_text}
-      </Button> */}
-      
-      <Button 
-        variant="outline" 
-        size="lg" 
-        className="text-lg px-8"
-        asChild
-      >
-        <a href={page.shedule_call_button_url}>
-          <Phone className="w-5 h-5 mr-2" />
-          {page.shedule_call_text}
-        </a>
-      </Button>
-    </div>
-  </div>
-</section>
-
+        {/* FCA */}
+        <section className="text-center text-sm text-muted-foreground">
+          <Shield className="inline w-4 h-4 mr-1" />
+          FCA Registration: {page.fca_numer_value}
+        </section>
 
       </main>
 

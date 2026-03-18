@@ -1,314 +1,407 @@
+import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Cookie, Shield, Settings, Eye, BarChart3, MousePointer } from "lucide-react";
+import {
+  Cookie,
+  Settings,
+  BarChart3,
+  ShieldCheck,
+  Target,
+  AlertTriangle,
+} from "lucide-react";
+
+/* ================= SHIMMER ================= */
+const Shimmer = () => (
+  <div className="animate-pulse space-y-6">
+    <div className="h-8 w-48 bg-gray-200 rounded" />
+    <div className="h-4 w-32 bg-gray-200 rounded" />
+    <div className="h-32 bg-gray-200 rounded" />
+    <div className="h-20 bg-gray-200 rounded" />
+  </div>
+);
+
+// helper to extract first <p> from HTML string
+const getFirstParagraph = (html: string) => {
+  const match = html.match(/<p[^>]*>[\s\S]*?<\/p>/i);
+  return match ? match[0] : html;
+};
+
+// put this helper ABOVE your component
+const extractListItems = (html: string): string[] => {
+  if (!html) return [];
+  const regex = /<li[^>]*>([\s\S]*?)<\/li>/gi;
+  const items: string[] = [];
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    // strip any tags inside <li> (like <p>)
+    const text = match[1].replace(/<[^>]+>/g, "").trim();
+    if (text) items.push(text);
+  }
+  return items;
+};
+
+
+// helper ABOVE component
+const splitImportant = (html: string) => {
+  if (!html) return { normal: html, important: "" };
+  const parts = html.split(/(<p><strong>Important:[\s\S]*?<\/p>)/i);
+  // parts: [beforeImportant, importantParagraph, afterImportant?]
+  const normal =
+    (parts[0] || "") + (parts[2] || ""); // everything except important <p>
+  const important = parts[1] || "";
+  return { normal, important };
+};
+
 
 const CookiePolicy = () => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("https://admin.whooshcar.testingweblink.com/api/cookie_policy")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json?.data?.length) setData(json.data[0]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#FBF9F4]">
       <Header />
-      <main className="pt-24">
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="bg-card rounded-lg shadow-lg p-8">
-          <h1 className="text-4xl font-comic font-bold text-primary mb-6 flex items-center gap-3">
-            <Cookie className="w-10 h-10" />
-            Cookie Policy
-          </h1>
-          
-          <div className="text-sm text-muted-foreground mb-8">
-            <strong>LAST UPDATED: {new Date().toLocaleDateString('en-GB')}</strong>
+
+      <main className="pt-24 pb-20">
+        <div className="max-w-[920px] mx-auto px-4">
+          <div className="bg-[#ffffff] shadow-lg px-8 py-7 border border-[#EEEBDC]">
+            {/* TITLE */}
+            <h1
+              className="text-4xl font-comic font-bold text-primary mb-6 flex items-center gap-3"
+              // className="text-3xl flex items-center gap-2 mb-1"
+              style={{ fontFamily: "Bangers, cursive", color: "#F2D85A" }}
+            >
+              <Cookie /> {data?.cookie_policy_title}
+            </h1>
+
+            <p className="text-sm text-muted-foreground mb-8">
+              <strong>{data?.cookie_policy_date}</strong>
+            </p>
+
+            {loading || !data ? (
+              <Shimmer />
+            ) : (
+              <>
+                {/* INTRO
+                <div className="bg-[#F7F4EB] border-l-4 border-[#F2D85A] p-6 mb-8 text-[16px] leading-7">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: data.cookie_policy_description,
+                    }}
+                  />
+                </div> */}
+
+                {/* INTRO */}
+                <div className="bg-[#F7F4EB] border-l-4 border-[#F2D85A] p-6 mb-8 text-[16px] leading-7">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: getFirstParagraph(data.cookie_policy_description),
+                    }}
+                  />
+                </div>
+                <div
+                  className="mt-4 mb-9 text-[16px] leading-6"
+                  dangerouslySetInnerHTML={{
+                    __html: data.cookie_policy_description.replace(
+                      getFirstParagraph(data.cookie_policy_description),
+                      ""
+                    ),
+                  }}
+                />
+
+
+                {/* WHAT ARE COOKIES */}
+                <section className="mb-8">
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4 flex items-center gap-2">
+                    <Cookie className="w-5 h-5 text-[#F2D85A]" />
+                    {data.who_are_cookie_title}
+                  </h2>
+
+
+
+                  <p className="mb-4 text-[16px] leading-6">
+                    {data.who_are_cookie_description}
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    {data.cookie_purpose?.map((p: any, i: number) => {
+                      const purposeIcons = [
+                        <Settings key="s" className="w-5 h-5" />,
+                        <BarChart3 key="b" className="w-5 h-5" />,
+                        <ShieldCheck key="sh" className="w-5 h-5" />,
+                        <Target key="t" className="w-5 h-5" />,
+                      ];
+
+                      return (
+                        <div
+                          key={i}
+                          className="bg-muted p-4 rounded-lg flex items-center gap-3"
+                        // className="flex items-center gap-3 bg-white p-3 shadow-sm"
+                        >
+                          <span className="w-7 h-7 rounded-full bg-[#F2D85A] flex items-center justify-center text-white">
+                            {purposeIcons[i]}
+                          </span>
+                          <span className="text-[16px] leading-6">
+                            {p.cookie_purpose_text}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+
+                  <p className="text-[16px] leading-6">
+                    {data.who_are_cookie_2_description}
+                  </p>
+                </section>
+
+                {/* TYPES OF COOKIES */}
+                <section className="mb-8">
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4">
+                    {/* <h2 className="text-xl font-bold text-[#F2D85A] mb-4"> */}
+                    {data.type_of_cookie_title}
+                  </h2>
+
+                  {data.cookie_type?.map((c: any, i: number) => (
+                    <div key={i} className="bg-white mb-3 shadow-sm border border-border rounded-lg p-6">
+                      <span className="text-xl font-semibold mb-3 text-primary">
+
+                        <strong>{c.cookie_type_text}</strong>
+                      </span>
+                      <p className="mt-1 text-[16px] leading-6 whitespace-pre-line">
+                        {c.cookie_type_description}
+                      </p>
+                    </div>
+                  ))}
+                </section>
+
+                {/* HOW DOES OUR SITE USE COOKIES */}
+                <section className="mb-8">
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4">
+                    {data.use_cookie_title}
+                  </h2>
+
+                  <ol className="list-decimal pl-5 space-y-3 text-[16px] leading-6 text-[#4D4D4D]">
+                    {extractListItems(data.how_cookie_used_list).map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+
+
+                {/* COOKIE CATEGORIES */}
+                {/* COOKIE CATEGORIES – MATCHES IMAGE 2 */}
+                <section className="mb-10">
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4">
+                    {data.cookie_categories_title}
+                  </h2>
+
+                  <div className="space-y-5">
+                    {data.cookie_category?.map((cat: any, i: number) => {
+                      const icons = [
+                        ShieldCheck,
+                        BarChart3,
+                        Settings,
+                        Target,
+                      ];
+
+                      const theme = [
+                        {
+                          bg: "bg-[#F1F7FF]",
+                          border: "border-[#BBD6FF]",
+                          text: "text-[#1E40AF]",
+                          icon: "text-[#1E40AF]",
+                        },
+                        {
+                          bg: "bg-[#F0FFF6]",
+                          border: "border-[#86EFAC]",
+                          text: "text-[#166534]",
+                          icon: "text-[#166534]",
+                        },
+                        {
+                          bg: "bg-[#FFF7ED]",
+                          border: "border-[#FDBA74]",
+                          text: "text-[#9A3412]",
+                          icon: "text-[#9A3412]",
+                        },
+                        {
+                          bg: "bg-[#F8F2FF]",
+                          border: "border-[#D8B4FE]",
+                          text: "text-[#6B21A8]",
+                          icon: "text-[#6B21A8]",
+                        },
+                      ];
+
+                      const Icon = icons[i];
+                      const t = theme[i];
+
+                      return (
+                        <div
+                          key={i}
+                          className={`rounded-xl border px-6 py-6 ${t.bg} ${t.border}`}
+                        >
+                          <div className="flex gap-3 items-start">
+                            {/* <Icon className={`w-5 h-5 mt-1 ${t.icon}`} /> */}
+                            <div className="mt-0.5">
+                              <Icon className={`w-7 h-7 ${t.icon}`} />
+                            </div>
+
+
+                            <div>
+                              <h3 className={`font-semibold text-[16px] mb-2 ${t.text}`}>
+                                {cat.cookie_category_text}
+                              </h3>
+
+                              <p className={`text-[16px] leading-[24px] ${t.text}`}>
+                                {cat.cookie_category_description}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+
+
+
+
+
+                {/* CONSENT CONTROL */}
+                <section className="mb-8">
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4">
+                    {data.concent_control_title}
+                  </h2>
+
+                  {(() => {
+                    const { normal, important } = splitImportant(
+                      data.concent_control_description
+                    );
+                    return (
+                      <>
+                        {/* normal paragraphs (no highlight) */}
+                        <div
+                          className="text-[16px] leading-6 text-[#4D4D4D] space-y-2 mb-3"
+                          dangerouslySetInnerHTML={{ __html: normal }}
+                        />
+
+                        {/* highlighted Important paragraph only */}
+                        {important && (
+                          <div className="bg-[#FFF7DA] p-4 border-l-4 border-[#F2D85A]">
+                            <div
+                              className="text-[16px] leading-6 text-[#4D4D4D]"
+                              dangerouslySetInnerHTML={{ __html: important }}
+                            />
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+                </section>
+
+
+                {/* YOUR COOKIE OPTIONS */}
+                <section className="mb-8">
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4">
+                    {/* <h2 className="text-xl font-bold text-[#F2D85A] mb-3"> */}
+                    {data.your_cookie_title}
+                  </h2>
+
+                  <p className="mb-3 text-[16px] leading-6">
+                    {data.your_cookie_description}
+                  </p>
+
+                  <p className="mb-2 text-[16px] font-semibold">
+                    {data.manage_cookie_title}
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    {data.browsers_cookie?.map((b: any, i: number) => (
+                      <div
+                        key={i}
+                        className="bg-[#F3F1ED] rounded-lg border border-[#E5E5E5] p-3 text-[14px]"
+                      >
+                        <strong className="block mb-1">
+                          {b.browser_text}
+                        </strong>
+                        <p>{b.browser_text_description}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="bg-red-50 border border-red-200 p-4 rounded-lg text-red-800">
+                    {/* <div className="bg-[#F8D7DA] text-[13px] p-3 leading-5"> */}
+                    {data.please_note_description}
+                  </div>
+                </section>
+
+                {/* DEFINITIONS AND INTERPRETATION */}
+                <section className="mb-8">
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4">
+                    {/* <h2 className="text-xl font-bold text-[#F2D85A] mb-3"> */}
+                    {data.definations_title}
+                  </h2>
+
+                  <p className="mb-3 text-[16px] leading-6">
+                    {data.definations_description}
+                  </p>
+
+                  <div
+                    className="border-l-4 border-primary pl-4 space-y-4"
+                    // className="space-y-1 text-[16px] leading-6"
+                    dangerouslySetInnerHTML={{
+                      __html: data.definations_list,
+                    }}
+                  />
+                </section>
+
+                {/* CHANGES TO THIS COOKIE POLICY */}
+                <section className="mb-8">
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4">
+                    {/* <h2 className="text-xl font-bold text-[#F2D85A] mb-3"> */}
+                    {data.change_cookie_title}
+                  </h2>
+
+                  <p className="text-[16px] leading-6 whitespace-pre-line">
+                    {data.change_cookie_description}
+                  </p>
+                </section>
+
+                {/* CONTACT US */}
+                <section>
+                  <h2 className="text-2xl font-comic font-bold text-primary mb-4">
+                    {data.contact_us_title}
+                  </h2>
+
+                  <p className="text-[16px] leading-6 text-[#4D4D4D] mb-3">
+                    If you have any questions about this Cookie Policy, please contact us:
+                  </p>
+
+                  <div
+                    className="bg-[#F3F1EC] p-4 text-[16px] leading-6"
+                    dangerouslySetInnerHTML={{
+                      __html: data.contact_us_description.replace(
+                        /^<p>If you have any questions about this Cookie Policy, please contact us:<\/p>/,
+                        ""
+                      ),
+                    }}
+                  />
+                </section>
+
+              </>
+            )}
           </div>
-
-          <div className="space-y-8 text-foreground">
-            {/* Introduction */}
-            <section>
-              <div className="bg-primary/10 border-l-4 border-primary p-6 rounded-r-lg mb-6">
-                <p className="text-foreground">
-                  This website, WHOOSH! Car Finance (the "Website"), is operated by Whoosh Finance Limited. 
-                  This Cookie Policy explains how we use cookies and similar technologies to distinguish you from 
-                  other users. By using cookies, we are able to provide you with a better experience and to improve 
-                  our site by better understanding how you use it.
-                </p>
-              </div>
-              <p className="mb-4">
-                Please read this Cookie Policy carefully and ensure that you understand it. Your acceptance of our 
-                Cookie Policy is deemed to occur if you continue using our site. If you do not agree to our Cookie 
-                Policy, please stop using our site immediately.
-              </p>
-            </section>
-
-            {/* What are Cookies */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4 flex items-center gap-2">
-                <Cookie className="w-6 h-6" />
-                What Are Cookies?
-              </h2>
-              <p className="mb-4">
-                Cookies are small text files that are stored in your web browser that allow WHOOSH! Finance or a 
-                third party to recognise you. Cookies can be used to collect, store and share bits of information 
-                about your activities across websites, including on the WHOOSH! Finance website.
-              </p>
-              
-              <p className="mb-4">Cookies might be used for the following purposes:</p>
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <div className="bg-muted p-4 rounded-lg flex items-center gap-3">
-                  <Settings className="w-6 h-6 text-primary" />
-                  <span>To enable certain functions</span>
-                </div>
-                <div className="bg-muted p-4 rounded-lg flex items-center gap-3">
-                  <BarChart3 className="w-6 h-6 text-primary" />
-                  <span>To provide analytics</span>
-                </div>
-                <div className="bg-muted p-4 rounded-lg flex items-center gap-3">
-                  <Shield className="w-6 h-6 text-primary" />
-                  <span>To store your preferences</span>
-                </div>
-                <div className="bg-muted p-4 rounded-lg flex items-center gap-3">
-                  <Eye className="w-6 h-6 text-primary" />
-                  <span>To enable ad delivery and behavioural advertising</span>
-                </div>
-              </div>
-              
-              <p>WHOOSH! Finance uses both session cookies and persistent cookies.</p>
-            </section>
-
-            {/* Types of Cookies */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4">Types of Cookies We Use</h2>
-              
-              <div className="space-y-6">
-                <div className="border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-3 text-primary">Session Cookies</h3>
-                  <p className="mb-3">
-                    A session cookie is used to identify a particular visit to our website. These cookies expire 
-                    after a short time, or when you close your web browser after using our website.
-                  </p>
-                  <p>
-                    We use these cookies to identify you during a single browsing session, such as when you 
-                    navigate through our website or use our finance application forms.
-                  </p>
-                </div>
-                
-                <div className="border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-3 text-primary">Persistent Cookies</h3>
-                  <p className="mb-3">
-                    A persistent cookie will remain on your device for a set period of time specified in the cookie. 
-                    We use these cookies where we need to identify you over a longer period of time.
-                  </p>
-                  <p>
-                    For example, we would use a persistent cookie if you asked that we keep you signed in or 
-                    remember your preferences for future visits.
-                  </p>
-                </div>
-                
-                <div className="border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-3 text-primary">First Party Cookies</h3>
-                  <p>
-                    Our site may place and access certain first party cookies on your computer or device. 
-                    First party cookies are those placed directly by us and are used only by us. We use cookies 
-                    to facilitate and improve your experience of our site and to provide and improve our products and services.
-                  </p>
-                </div>
-                
-                <div className="border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-3 text-primary">Third Party Cookies</h3>
-                  <p>
-                    By using our site, you may also receive certain third party cookies on your computer or device. 
-                    Third party cookies are those placed by websites, services, and/or parties other than us. 
-                    Third party cookies are used on our site for analytics services and advertising.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* How We Use Cookies */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4">How Does Our Site Use Cookies?</h2>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">1</div>
-                  <p>
-                    We have carefully chosen these cookies and have taken steps to ensure that your privacy and 
-                    personal data is protected and respected at all times.
-                  </p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">2</div>
-                  <p>
-                    Third party companies like analytics companies and ad networks generally use cookies to collect 
-                    user information on an anonymous basis. They may use that information to build a profile of your 
-                    activities on the WHOOSH! Finance website and other websites that you've visited.
-                  </p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">3</div>
-                  <p>
-                    By starting an application for car finance, you consent to receive transactional communications 
-                    from us, through the use of cookies. These emails are intended to keep you informed and assist 
-                    you in completing your transactions.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* Cookie Categories */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4">Cookie Categories</h2>
-              <div className="grid gap-6">
-                <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2">
-                    <Settings className="w-5 h-5" />
-                    Essential Cookies
-                  </h3>
-                  <p className="text-blue-700">
-                    These cookies are necessary for the website to function and cannot be switched off in our systems. 
-                    They are usually only set in response to actions made by you which amount to a request for services, 
-                    such as setting your privacy preferences, logging in or filling in forms.
-                  </p>
-                </div>
-                
-                <div className="bg-green-50 border border-green-200 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-green-800 mb-3 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
-                    Analytics Cookies
-                  </h3>
-                  <p className="text-green-700">
-                    These cookies allow us to count visits and traffic sources so we can measure and improve the 
-                    performance of our site. They help us to know which pages are the most and least popular and 
-                    see how visitors move around the site.
-                  </p>
-                </div>
-                
-                <div className="bg-orange-50 border border-orange-200 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-orange-800 mb-3 flex items-center gap-2">
-                    <MousePointer className="w-5 h-5" />
-                    Functional Cookies
-                  </h3>
-                  <p className="text-orange-700">
-                    These cookies enable the website to provide enhanced functionality and personalisation. 
-                    They may be set by us or by third party providers whose services we have added to our pages.
-                  </p>
-                </div>
-                
-                <div className="bg-purple-50 border border-purple-200 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-purple-800 mb-3 flex items-center gap-2">
-                    <Eye className="w-5 h-5" />
-                    Targeting Cookies
-                  </h3>
-                  <p className="text-purple-700">
-                    These cookies may be set through our site by our advertising partners. They may be used by those 
-                    companies to build a profile of your interests and show you relevant adverts on other sites.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* Consent Control */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4">Consent Control</h2>
-              <p className="mb-4">
-                Before cookies are placed on your computer or device, you will be shown a pop-up requesting your 
-                consent to set those cookies. By giving your consent to the placing of cookies you are enabling us 
-                to provide the best possible experience and service to you.
-              </p>
-              <p className="mb-4">
-                You may, if you wish, deny consent to the placing of cookies; however certain features of our site 
-                may not function fully or as intended.
-              </p>
-              <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                <p className="text-yellow-800">
-                  <strong>Important:</strong> In addition to the controls that we provide, you can choose to enable 
-                  or disable cookies in your internet browser. Most internet browsers also enable you to choose 
-                  whether you wish to disable all cookies or only third party cookies.
-                </p>
-              </div>
-            </section>
-
-            {/* Your Cookie Options */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4">Your Cookie Options</h2>
-              <p className="mb-4">
-                If you don't like the idea of cookies or certain types of cookies, you can change your browser's 
-                settings to delete cookies that have already been set and to not accept new cookies.
-              </p>
-              
-              <h3 className="text-lg font-semibold mb-3">How to Manage Cookies in Different Browsers:</h3>
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <div className="bg-muted p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Google Chrome</h4>
-                  <p className="text-sm">Settings → Privacy and Security → Cookies and other site data</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Mozilla Firefox</h4>
-                  <p className="text-sm">Options → Privacy & Security → Cookies and Site Data</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Safari</h4>
-                  <p className="text-sm">Preferences → Privacy → Cookies and website data</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Microsoft Edge</h4>
-                  <p className="text-sm">Settings → Cookies and site permissions → Cookies and site data</p>
-                </div>
-              </div>
-              
-              <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
-                <p className="text-red-800">
-                  <strong>Please note:</strong> If you delete cookies or do not accept them, you might not be able 
-                  to use all of the features we offer, you may not be able to store your preferences, and some of 
-                  our pages might not display properly.
-                </p>
-              </div>
-            </section>
-
-            {/* Definitions */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4">Definitions and Interpretation</h2>
-              <p className="mb-4">In this Cookie Policy, unless the context otherwise requires, the following expressions have the following meanings:</p>
-              
-              <div className="space-y-4">
-                <div className="border-l-4 border-primary pl-4">
-                  <p><strong>"Cookie"</strong> means a small file placed on your computer or device by our site when you visit certain parts of our site and/or when you use certain features of our site.</p>
-                </div>
-                <div className="border-l-4 border-primary pl-4">
-                  <p><strong>"Cookie Law"</strong> means the relevant parts of the Privacy and Electronic Communications (EC Directive) Regulations 2003 and of UK GDPR.</p>
-                </div>
-                <div className="border-l-4 border-primary pl-4">
-                  <p><strong>"Personal Data"</strong> means any and all data that relates to an identifiable person who can be directly or indirectly identified from that data, as defined by UK GDPR.</p>
-                </div>
-              </div>
-            </section>
-
-            {/* Changes to Policy */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4">Changes to This Cookie Policy</h2>
-              <p className="mb-4">
-                We may alter this Cookie Policy at any time. Any such changes will become binding on you on your 
-                first use of our site after the changes have been made. You are therefore advised to check this 
-                page from time to time.
-              </p>
-              <p>
-                In the event of any conflict between the current version of this Cookie Policy and any previous 
-                version(s), the provisions current and in effect shall prevail unless it is expressly stated otherwise.
-              </p>
-            </section>
-
-            {/* Contact Information */}
-            <section>
-              <h2 className="text-2xl font-comic font-bold text-primary mb-4">Contact Us</h2>
-              <p className="mb-4">
-                If you have any questions about this Cookie Policy, please contact us:
-              </p>
-              <div className="bg-muted p-4 rounded-lg">
-                <p><strong>Whoosh Finance Limited</strong></p>
-                <p>Email: <a href="mailto:hello@whooshcarfinance.co.uk" className="text-primary hover:underline">hello@whooshcarfinance.co.uk</a></p>
-                <p>Phone: <a href="tel:08001234567" className="text-primary hover:underline">0800 123 4567</a></p>
-                <p>Address: Unit 2, 30 Broughton Street, Cheetham Hill, Manchester, M8 8NN, United Kingdom</p>
-              </div>
-            </section>
-          </div>
-        </div>
         </div>
       </main>
+
       <Footer />
     </div>
   );

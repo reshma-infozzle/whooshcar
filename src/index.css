@@ -360,3 +360,432 @@ All colors MUST be HSL.
     transition: none !important;
   }
 }
+
+
+/* New CSS */
+.accordion-item .accordion-content strong {
+  font-family: Bangers, cursive;
+}
+ 
+.accordion-item.bg-primary\/10 .accordion-content strong {
+  color: hsl(var(--primary));
+}
+ 
+.accordion-item.bg-secondary\/10 .accordion-content strong {
+  color: hsl(var(--secondary));
+}
+
+.hero-text u {
+  color: hsl(50, 85%, 65%) !important;
+  text-decoration: unset !important;
+}
+
+.hero-text em {
+  color: hsl(160, 60%, 80%) !important;
+  font-style: unset !important;
+}
+
+.custom-color-text u {
+  color: hsl(40 95% 75%) !important;
+  text-decoration: unset !important;
+  font-family: Bangers, cursive !important;
+  font-size: 36px !important;
+}
+
+.custom-color-text em {
+  color: hsl(160, 60%, 80%) !important;
+  font-style: unset !important;
+  font-family: Bangers, cursive !important;
+  font-size: 36px !important;
+}
+
+/* shimmer effect on blog page */
+
+.blog-loading {
+  background: linear-gradient(90deg, #f5f5f5 25%, #e2e2e2 50%, #f5f5f5 75%);
+  background-size: 200% 100%;
+  animation: blog-loading-animation 1.5s infinite;
+}
+ 
+@keyframes blog-loading-animation {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+/* kg css */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+ 
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 300% 100%;
+  animation: shimmer 1.5s infinite;
+}
+ 
+.contact-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: contact-loading-animation 1.5s infinite;
+}
+ 
+@keyframes contact-loading-animation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+ 
+.howitworks-loading {
+  background: linear-gradient(90deg, #f5f5f5 25%, #e2e2e2 50%, #f5f5f5 75%);
+  background-size: 200% 100%;
+  animation: howitworks-loading-animation 1.5s infinite;
+}
+ 
+@keyframes howitworks-loading-animation {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.blog-loading {
+  background: linear-gradient(90deg, #e2e2e2 0%, #f5f5f5 50%, #e2e2e2 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.single-blog-post-title h2{
+  font-size: 2rem;
+  color: #21242c;
+  font-family: Bangers, cursive;
+  margin-top: 1rem;
+} 
+
+.single-blog-post-title h3{
+  font-size: 1.5rem;
+  color: #21242c;
+  font-family: Bangers, cursive;
+  margin-top: 1rem;
+}
+
+.single-blog-post-title ul{
+    list-style: disc;
+    list-style-position: inside;
+}
+
+.single-blog-post-title ul li p{
+    display: inline;
+}
+
+
+
+
+.custom-color-yellow h2 strong{
+  color: #f2d85a;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  font-family: Bangers,cursive;
+}
+ 
+.custom-ul-tag ul {
+  list-style: disc!important;
+  padding-left: 34px!important;
+  margin-top: 1rem!important;;
+  margin-bottom: 1rem!important;;
+}
+ 
+.custom-ul-tag li {
+  margin-bottom: 0.5rem;
+}
+ 
+.custom-color-yellow a{
+  color: #f2d85a;
+}
+ 
+.custom-color-yellow a:hover{
+  text-decoration: underline;
+}
+ 
+.custom-color-yellow p{
+   font-size: 14px;
+   margin-bottom: 10px;
+}
+ 
+.custom-ul-tag-box ul {
+  font-size: 14px!important;
+  line-height: 20px;
+  list-style: disc!important;
+  padding-left: 34px!important;
+  margin-top: 1rem!important;;
+  margin-bottom: 1rem!important;;
+}
+ 
+.custom-class-content p{
+  font-size: 14px;
+    color: #576175;
+    margin-top: 20px;
+}
+ 
+ 
+ 
+/* Wrapper */
+.complaint-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+ 
+/* Each row */
+.step {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+ 
+/* Yellow number circle */
+.step-number {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;          
+  border-radius: 50%;
+  background-color: #f2d85a;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  margin-top: 2px;
+}
+ 
+/* Text block */
+.step-text {
+  flex: 1;                  /* 🔑 keeps text inline */
+}
+ 
+/* Bold title inside text */
+.step-text strong {
+  font-weight: 700;
+}
+ 
+.resolution-container h3{
+  margin-bottom: 20px;
+}
+
+.disclosure-content {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #4b5563;
+}
+ 
+.disclosure-content h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #21242c;
+  margin-bottom: 16px;
+}
+ 
+.disclosure-content h2 strong {
+  font-size: 24px;
+  font-weight: 600;
+  color: #21242c;
+}
+ 
+ 
+.disclosure-content p {
+  margin-bottom: 20px;
+  color: #576175;
+  font-size: 16px;
+}
+ 
+ 
+.disclosure-content ul li p {
+  margin-bottom: 0 !important;
+}
+ 
+ 
+.disclosure-content ul {
+  margin: 12px 0 20px 20px;
+  padding-left: 16px;
+  list-style-type: disc;
+}
+ 
+.disclosure-content li {
+  margin-bottom: 6px;
+}
+ 
+.disclosure-content strong {
+  font-weight: 600;
+  color: #576175;
+}
+ 
+.disclosure-content a {
+  color: #f2d85a;
+  text-decoration: underline;
+  word-break: break-word;
+}
+ 
+.disclosure-content br {
+  line-height: 1.8;
+}
+ 
+ 
+.disclosure-content h2 {
+  margin-top: 40px;            
+  padding-top: 28px;            
+  margin-bottom: 20px;          
+  border-top: 1px solid #e5e7eb;
+  font-size: 24px;
+  font-weight: 600;
+  color: #21242c;
+}
+.disclosure-content h2:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.custom-color-text u,
+.custom-color-text em,
+.custom-color-text u{
+  font-size: 20px!important;
+}
+.custom-font-family u{
+   font-family: Bangers,cursive;
+}
+.custom-margin-class p:first-of-type {
+  margin-bottom: 0 !important;
+}
+.custom-color-blue-2 em{
+  font-family: Bangers, cursive;
+  font-size: 24px;
+}
+.custom-color-blue-3 h4{
+  font-family: Bangers, cursive;
+  font-size: 18px;
+  color: #adebd6;
+}
+.custom-color-blue-3 em{
+  font-family: Bangers, cursive;
+  font-size: 18px;
+  color: #adebd6;
+}
+.custom-color-yellow-2 u{
+  font-family: Bangers, cursive;
+  font-size: 24px;
+}
+ 
+ 
+ 
+ 
+.custom-list-style ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px!important;
+}
+ 
+.custom-list-style ul li {
+  position: relative;
+  padding-left: 34px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-family: poppins, sans-serif;
+  line-height: 1.6;
+  text-align: left;
+}
+ 
+/* SVG check icon */
+.custom-list-style ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+ 
+  background-color: #facc15; /* icon color */
+ 
+  mask: url("/Frame.svg") no-repeat center;
+  -webkit-mask: url("/Frame.svg") no-repeat center;
+ 
+  mask-size: contain;
+  -webkit-mask-size: contain;
+}
+ 
+.custom-color-footer a {
+  color: hsl(50 85% 65%) !important;
+}
+.custom-color-footer a:hover{
+  text-decoration: underline !important;
+}
+
+.custom-color-whoosh u {
+  color: hsl(40 95% 75%) !important;
+  text-decoration: unset !important;
+  font-family: Bangers, cursive !important;
+  font-size: 18px !important;
+}
+
+
+/* Shared styles for injected CMS HTML */
+.risk-html p,
+.compliance-html p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #374151;
+  margin-bottom: 12px;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Strong headings inside HTML */
+.risk-html strong,
+.compliance-html strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+/* Divider between logical blocks */
+.risk-html p + p strong,
+.compliance-html p + p strong {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #D1D5DB; /* matches your screenshot divider */
+}
+
+.custom-color-text h2 strong {
+  color: #fcd383!important
+}
+
+/* 30-01 */
+
+.custom-hide-sections > div:nth-child(4) {
+  display: none !important;
+}
+
+.start-calculating-hide > button {
+  display: none !important;
+}
+
+

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -17,6 +18,16 @@ import { lookupPostcode, type PostcodeAddress } from "@/lib/postcodeService";
 import { AddressSelectionDialog } from "@/components/AddressSelectionDialog";
 import { DateOfBirthPicker } from "@/components/DateOfBirthPicker";
 import { cn } from "@/lib/utils";
+import {
+  mapEmploymentStatus,
+  mapHousingStatus,
+  mapLicenceType,
+  mapVehicleType,
+  mapMaritalStatus,
+  getCountryCode
+} from "@/lib/autoconvertMapper";
+
+
 const Apply = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
@@ -40,7 +51,7 @@ const Apply = () => {
       middleName: "",
       lastName: "",
       email: "",
-      phone: "",
+      // phone: "",
       dateOfBirth: "",
       licenceType: "",
       ukResident: "",
@@ -57,10 +68,15 @@ const Apply = () => {
       yearsInEmploymentStatus: "",
       annualIncome: "",
       housingStatus: "",
-      creditCheckConsent: false,
+      // creditCheckConsent: false,
+      // creditSearchConsent: false,
+      // termsConsent: false,
+      // privacyConsent: false,
+      // marketingConsent: false,
+
+      partnerConsent: false,
+      creditConsent: false,
       termsConsent: false,
-      privacyConsent: false,
-      marketingConsent: false,
     },
   });
 
@@ -144,16 +160,245 @@ const Apply = () => {
     }, 300);
   };
 
+
   const onSubmit = async (data: ApplyFormData) => {
-    console.log("Form submitted:", data);
-    
-    // Handle form submission - would typically send to backend
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Navigate to completion page
-    navigate("/application-complete");
+
+  const formData = new FormData();
+
+  /* ======================
+     LOAN
+  ====================== */
+  formData.append("borrow_amount", data.loanAmount || "");
+  formData.append(
+    "specific_borrow_amount",
+    data.loanAmountSpecific ? String(data.loanAmountSpecific) : ""
+  );
+
+  /* ======================
+     VEHICLE
+  ====================== */
+  formData.append("finance_for", data.vehicleType || "");
+
+  /* ======================
+     EMPLOYMENT
+  ====================== */
+  formData.append("employment_status", data.employmentStatus || "");
+  formData.append("job_title", data.jobTitle || "N/A");
+  formData.append("years_as_employed", data.yearsInEmploymentStatus || "1");
+  formData.append("years_employed", data.yearsInEmploymentStatus || "1");
+
+  formData.append("monthly_income", data.annualIncome || "");
+  formData.append("housing_status", data.housingStatus || "");
+
+  formData.append("employer_name", data.employerName || "N/A");
+  formData.append("employer_phone", "0000000000");
+
+  /* ======================
+     PERSONAL
+  ====================== */
+  formData.append("dob", data.dateOfBirth || "");
+  formData.append("uk_residency", data.ukResident === "Yes" ? "1" : "0");
+  formData.append("driving_license", data.licenceType || "");
+  formData.append("title", data.title || "");
+  formData.append("first_name", data.firstName || "");
+  formData.append("middle_name", data.middleName || "");
+  formData.append("last_name", data.lastName || "");
+  formData.append("email", data.email || "");
+
+  formData.append("phone", "07000000000");
+
+  formData.append("marital_status", data.maritalStatus || "");
+
+  /* ======================
+     ADDRESS
+  ====================== */
+
+  const currentAddress = data.addressHistory?.[0];
+
+  formData.append("postcode", currentAddress?.postcode || "");
+  formData.append("postal_code", currentAddress?.postcode || "");
+  formData.append("full_address", currentAddress?.address || "");
+  formData.append("years_at_address", currentAddress?.yearsAtAddress || "");
+  formData.append("time_at_address", currentAddress?.yearsAtAddress || "");
+
+  /* ======================
+     CONSENTS
+  ====================== */
+
+  formData.append("credit_check_consent", "1");
+  formData.append("credit_search_consent", "1");
+  formData.append("terms_consent", "1");
+  formData.append("privacy_consent", "1");
+  formData.append("partner_consent", data.partnerConsent ? "1" : "0");
+  formData.append("credit_consent", data.creditConsent ? "1" : "0");
+  formData.append("terms_consent", data.termsConsent ? "1" : "0");
+
+  /* ======================
+     META
+  ====================== */
+
+  formData.append("source", "web");
+  formData.append("ip_address", "127.0.0.1");
+
+
+  /* ======================
+     SECOND API JSON PAYLOAD
+  ====================== */
+
+  const mapEmploymentStatus = (status?: string) => {
+  const map: Record<string, string> = {
+    "Full-time Employed": "Full-Time Employment",
+    "Part-time Employed": "Part-Time Employment",
+    "Self-employed": "Self-Employed",
+    "Benefits": "Benefits",
+    "Student": "Education",
+    "Retired": "Retired",
+    "Armed Forces": "Armed Services",
+    "Homemaker": "Homemaker",
+    "Carer": "Carer",
   };
+
+  return map[status || ""] || "Other";
+};
+
+const mapHousingStatus = (status?: string) => {
+  const map: Record<string, string> = {
+    "Homeowner": "Homeowner",
+    "Private Tenant": "Tenant - Private",
+    "Council Tenant": "Tenant - Council",
+    "Living with Family": "Living With Family",
+    "Military Accommodation": "Military Accommodation",
+    "Work Accommodation": "Work Accommodation",
+    "Student Accommodation": "Student Accommodation",
+    "Other": "Other",
+  };
+
+  return map[status || ""] || "Other";
+};
+
+  const saveApplicationPayload = {
+    ApiKey: "9ad2ecf5-0501-4cf9-b6b0-6a25da150ff3",
+
+    Applicants: [
+      {
+        Title: data.title || "",
+        Forename: data.firstName || "",
+        Surname: data.lastName || "",
+        DateOfBirth: data.dateOfBirth || "",
+        Email: data.email || "",
+        Mobile: "07111111111",
+
+        Employments: [
+          {
+            MonthlyIncome: data.annualIncome || "",
+            // EmploymentStatus: data.employmentStatus || "",
+            EmploymentStatus: mapEmploymentStatus(data.employmentStatus),
+            JobTitle: data.jobTitle || "",
+            Employer: data.employerName || "N/A"
+          }
+        ],
+
+        Addresses: [
+          {
+            // ResidentialStatus: data.housingStatus || "",
+            ResidentialStatus: mapHousingStatus(data.housingStatus),
+            Building: "",
+            Street: currentAddress?.address || "",
+            Town: "",
+            District: "",
+            County: "",
+            Postcode: currentAddress?.postcode || "",
+            TimeAtAddressYears: currentAddress?.yearsAtAddress || "",
+            TimeAtAddressMonths: "0",
+            BuildingNumber: "",
+            // CountryAlphaCode: "GB",
+            CountryAlphaCode: getCountryCode(),
+            DependentLocality: ""
+          }
+        ]
+      }
+    ],
+
+    Nationality: "UK",
+    // DrivingLicenceType: data.licenceType || "",
+    DrivingLicenceType: mapLicenceType(data.licenceType),
+    // MaritalStatus: data.maritalStatus || "",
+    MaritalStatus: mapMaritalStatus(data.maritalStatus),
+    BusinessDetails: null,
+    BusinessAddress: null,
+    AmountToBorrow: Number(data.loanAmountSpecific) || 0,
+    Term: 12,
+    // VehicleType: data.vehicleType || "Car",
+    VehicleType: mapVehicleType(data.vehicleType),
+    CreditScore: 0,
+    Registration: null,
+    LoanAmount: Number(data.loanAmountSpecific) || 0,
+    LoanTerm: 0,
+    LenderQuestionAnswers: null
+  };
+
+
+  try {
+
+    /* FIRST API */
+
+    const res = await fetch(
+      "https://admin.whooshcar.testingweblink.com/api/apply",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+
+    /* SECOND API */
+
+    const saveApplicationRes = await fetch(
+      "https://admin.whooshcar.testingweblink.com/api/save_application",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saveApplicationPayload),
+      }
+    );
+
+
+    if (!res.ok || !saveApplicationRes.ok) {
+      throw new Error("API request failed");
+    }
+
+    console.log("✅ Both APIs submitted successfully",saveApplicationRes);
+
+    navigate("/application-submitted");
+
+  } catch (error) {
+
+    console.error("❌ Submit failed", error);
+
+    toast({
+      title: "Submission failed",
+      description: "Please try again later.",
+      variant: "destructive",
+    });
+
+  }
+};
+
+
+
+// const onSubmit = async (data: ApplyFormData) => {
+//     console.log("Form submitted:", data);
+    
+//     // Handle form submission - would typically send to backend
+//     // Simulate API call
+//     await new Promise(resolve => setTimeout(resolve, 500));
+    
+//     // Navigate to completion page
+// setSubmitted(true);
+//   };
+
 
   const handlePostcodeLookup = async (postcode: string, addressIndex: number) => {
     if (!postcode || postcode.length < 5) {
@@ -244,15 +489,21 @@ const Apply = () => {
       case 1:
         return values.loanAmount !== "" && !errors.loanAmount;
       case 2:
+        return values.loanAmount !== "Under £5,000" ||
+          (values.loanAmountSpecific !== "" && !errors.loanAmountSpecific);
+      case 3:
         return values.vehicleType !== "" && !errors.vehicleType;
       case 4:
         return values.employmentStatus !== "" && !errors.employmentStatus;
       case 5:
         const empStatus = values.employmentStatus;
-        if (empStatus === "Full-time Employed" || empStatus === "Part-time Employed") {
-          return values.employerName !== "" && values.jobTitle !== "" &&
-                 !errors.employerName && !errors.jobTitle;
-        } else if (empStatus === "Self-employed" || empStatus === "Benefits" ||
+        if (
+          empStatus === "Full-time Employed" ||
+          empStatus === "Part-time Employed"
+        ) {
+          return values.jobTitle !== "" && !errors.jobTitle;
+
+        }  else if (empStatus === "Self-employed" || empStatus === "Benefits" ||
                    empStatus === "Unemployed" || empStatus === "Retired" || 
                    empStatus === "Student" || empStatus === "Armed Forces" ||
                    empStatus === "Homemaker" || empStatus === "Carer") {
@@ -270,40 +521,32 @@ const Apply = () => {
       case 10:
         return values.licenceType !== "" && !errors.licenceType;
       case 11:
-        return values.title !== "" && values.firstName !== "" && values.lastName !== "" &&
-               values.email !== "" && values.phone !== "" &&
-               !errors.title && !errors.firstName && !errors.lastName && 
-               !errors.email && !errors.phone;
-      case 12:
-        return values.maritalStatus !== "" && !errors.maritalStatus;
-      case 13:
         // Check if all addresses are filled and total years >= 3
         const addressHistory = values.addressHistory;
         const allFilled = addressHistory.every(addr => 
           addr.postcode !== "" && addr.address !== "" && addr.yearsAtAddress !== ""
         );
         const totalYears = getTotalAddressYears();
-        
-        // Debug logging
-        console.log("Step 13 validation:", {
-          allFilled,
-          totalYears,
-          addressHistory
-        });
-        
-        // Rely on computed values only (ignore lingering formState.errors)
         return allFilled && totalYears >= 3;
+      case 12:
+        return values.title !== "" && values.firstName !== "" && values.lastName !== "" &&
+               !errors.title && !errors.firstName && !errors.lastName;
+      case 13:
+        return values.maritalStatus !== "" && !errors.maritalStatus;
       case 14:
-        return values.creditCheckConsent === true && 
-               values.termsConsent === true && 
-               values.privacyConsent === true &&
-               !errors.creditCheckConsent && 
-               !errors.termsConsent && 
-               !errors.privacyConsent;
+        return (
+          values.email !== "" &&
+          values.partnerConsent === true &&
+          values.creditConsent === true &&
+          values.termsConsent === true &&
+          !errors.email
+        );
       default:
         return false;
     }
   };
+
+
 
   return (
     <>
@@ -502,16 +745,16 @@ const Apply = () => {
                       >
                         {status}
                       </Card>
-                  ))}
-                </div>
+                    ))}
+                  </div>
 
-                {form.formState.errors.employmentStatus && (
-                  <p className="text-destructive text-sm font-semibold text-center mt-4">
-                    {form.formState.errors.employmentStatus.message}
-                  </p>
-                )}
-              </div>
-            )}
+                  {form.formState.errors.employmentStatus && (
+                    <p className="text-destructive text-sm font-semibold text-center mt-4">
+                      {form.formState.errors.employmentStatus.message}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Step 5: Employment Details */}
               {currentStep === 5 && (
@@ -565,7 +808,7 @@ const Apply = () => {
                           )}
                         />
 
-                        <FormField
+                        {/* <FormField
                           control={form.control}
                           name="employerPhone"
                           render={({ field }) => (
@@ -583,10 +826,10 @@ const Apply = () => {
                               <FormMessage className="text-destructive text-sm font-semibold" />
                             </FormItem>
                           )}
-                        />
+                        /> */}
 
                     <p className="text-xs md:text-sm text-black/60 text-center font-body">
-                      💡 We need your employer contact details to verify your employment
+                      💡 Don't worry, we will <b>never</b> contact your employer.
                     </p>
                   </div>
                 </>
@@ -768,7 +1011,7 @@ const Apply = () => {
                       <span className="text-secondary">BOOM!</span> Date of birth
                     </h1>
                     <p className="font-body text-sm md:text-xl text-black/80">
-                      You must be 18 or over to apply
+                      You must be 21 or over to apply
                     </p>
                   </div>
 
@@ -777,16 +1020,16 @@ const Apply = () => {
                       control={form.control}
                       name="dateOfBirth"
                       render={({ field }) => {
-                        // Calculate the maximum date (18 years ago from today)
+                        // Calculate the maximum date (21 years ago from today)
                         const today = new Date();
-                        const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+                        const maxDate = new Date(today.getFullYear() - 21, today.getMonth(), today.getDate());
                         
                         return (
                           <FormItem className="flex flex-col w-full">
                             <FormLabel className="font-comic text-sm md:text-lg text-black block mb-2">
                               Date of Birth *
                               <span className="block text-xs md:text-sm text-black/60 font-body mt-1">
-                                (Must be 18 or over)
+                                (Must be 21 or over)
                               </span>
                             </FormLabel>
                             <FormControl>
@@ -814,14 +1057,14 @@ const Apply = () => {
                           age--;
                         }
                         
-                        if (age < 18) {
+                        if (age < 21) {
                           return (
                             <div className="mt-4 p-3 md:p-6 bg-destructive/10 border-2 md:border-4 border-destructive rounded-lg text-center w-full">
                               <p className="font-comic text-base md:text-2xl text-destructive mb-2 break-words">
                                 ⚠️ AGE REQUIREMENT NOT MET
                               </p>
                               <p className="font-body text-xs md:text-lg text-black break-words">
-                                Unfortunately, you must be at least 18 years old to apply for vehicle finance. Please check back when you meet the age requirement.
+                                Unfortunately, you must be at least 21 years old to apply for vehicle finance. Please check back when you meet the age requirement.
                               </p>
                             </div>
                           );
@@ -916,23 +1159,23 @@ const Apply = () => {
                         <div className="text-3xl md:text-5xl mb-2">{option.icon}</div>
                         <div className="font-comic text-sm md:text-lg">{option.value}</div>
                       </Card>
-                  ))}
+                    ))}
+                  </div>
+
+                  {form.formState.errors.housingStatus && (
+                    <p className="text-destructive text-sm font-semibold text-center mt-4">
+                      {form.formState.errors.housingStatus.message}
+                    </p>
+                  )}
                 </div>
+              )}
 
-                {form.formState.errors.housingStatus && (
-                  <p className="text-destructive text-sm font-semibold text-center mt-4">
-                    {form.formState.errors.housingStatus.message}
-                  </p>
-                )}
-              </div>
-            )}
-
-              {/* Step 11: Personal Details */}
-              {currentStep === 11 && (
+              {/* Step 12: Name Details */}
+              {currentStep === 12 && (
                 <div className="space-y-4 md:space-y-10">
                   <div className="text-center">
                     <h1 className="font-comic text-2xl md:text-4xl lg:text-5xl text-black mb-3 md:mb-6">
-                      <span className="text-primary">POW!</span> Your personal details
+                      <span className="text-primary">POW!</span> What's your name?
                     </h1>
                     <p className="font-body text-sm md:text-xl text-black/80">
                       Let's get to know you better
@@ -945,7 +1188,7 @@ const Apply = () => {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-comic text-sm md:text-lg text-black">Title</FormLabel>
+                          <FormLabel className="font-comic text-sm md:text-lg text-black">Title *</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger className="font-body text-base md:text-lg p-3 md:p-6 border-2 md:border-4 border-black">
@@ -988,7 +1231,7 @@ const Apply = () => {
                       name="middleName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-comic text-sm md:text-lg text-black">Middle Name</FormLabel>
+                          <FormLabel className="font-comic text-sm md:text-lg text-black">Middle Name (Optional)</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
@@ -1019,54 +1262,250 @@ const Apply = () => {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-comic text-sm md:text-lg text-black">Email Address *</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="email"
-                            className="font-body text-base md:text-lg p-3 md:p-6 border-2 md:border-4 border-black w-full"
-                            placeholder="john.doe@example.com"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-destructive text-sm font-semibold" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-comic text-sm md:text-lg text-black">Phone Number *</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="tel"
-                            inputMode="tel"
-                            className="font-body text-base md:text-lg p-3 md:p-6 border-2 md:border-4 border-black w-full"
-                            placeholder="07123 456789"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-destructive text-sm font-semibold" />
-                        <p className="text-xs text-black/60 mt-1 px-1">
-                          UK mobile format (e.g., 07123 456789)
-                        </p>
-                      </FormItem>
-                    )}
-                  />
                   </div>
                 </div>
               )}
 
-              {/* Step 12: Marital Status */}
-              {currentStep === 12 && (
+              {/* Step 14: Contact Details & Submit */}
+              {/* {currentStep === 14 && (
+                <div className="space-y-4 md:space-y-10">
+                  <div className="text-center">
+                    <h1 className="font-comic text-2xl md:text-4xl lg:text-5xl text-black mb-3 md:mb-6">
+                      <span className="text-primary">FINAL STEP!</span> Contact & Submit
+                    </h1>
+                    <p className="font-body text-sm md:text-xl text-black/80">
+                      Enter your contact details and submit your application
+                    </p>
+                  </div>
+
+                  <div className="space-y-4 md:space-y-6 max-w-2xl mx-auto px-2 md:px-0">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-comic text-sm md:text-lg text-black">Email Address *</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="email"
+                              className="font-body text-base md:text-lg p-3 md:p-6 border-2 md:border-4 border-black w-full"
+                              placeholder="john.doe@example.com"
+                            />
+                          </FormControl>
+                          <FormMessage className="text-destructive text-sm font-semibold" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                          control={form.control}
+                          name="employerPhone"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-comic text-sm md:text-lg text-black">Contact Number</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  type="tel"
+                                  inputMode="tel"
+                                  className="font-body text-base md:text-lg p-3 md:p-6 border-2 md:border-4 border-black w-full"
+                                  placeholder="020 1234 5678"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-destructive text-sm font-semibold" />
+                            </FormItem>
+                          )}
+                        />
+
+                    
+
+                    <div className="p-4 md:p-6 bg-muted/30 border-2 border-border rounded-lg">
+                      
+                      <p className="font-body text-xs md:text-sm text-black/70 leading-relaxed">
+                        By submitting, you consent to a soft search (<strong>no credit impact</strong>) and agree to our{" "}
+                        <a href="/terms-conditions" target="_blank" className="text-primary underline hover:text-primary/80">Terms</a>,{" "}
+                        <a href="/terms-of-business" target="_blank" className="text-primary underline hover:text-primary/80">Terms of Business</a> &{" "}
+                        <a href="/privacy-policy" target="_blank" className="text-primary underline hover:text-primary/80">Privacy Policy</a>.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )} */}
+
+
+
+              {/* Step 14: Contact Details & Submit */}
+              {currentStep === 14 && (
+                <div className="space-y-6 md:space-y-10">
+
+                  <div className="text-center">
+                    <h1 className="font-comic text-2xl md:text-4xl lg:text-5xl text-black mb-3 md:mb-6">
+                      <span className="text-primary">FINAL STEP!</span> Contact & Submit
+                    </h1>
+                    <p className="font-body text-sm md:text-xl text-black/80">
+                      Enter your contact details and submit your application
+                    </p>
+                  </div>
+
+                  <div className="space-y-6 max-w-2xl mx-auto">
+
+                    {/* EMAIL */}
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-comic text-sm md:text-lg text-black">
+                            Email Address *
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="email"
+                              className="font-body text-base md:text-lg p-3 md:p-6 border-2 md:border-4 border-black"
+                              placeholder="john.doe@example.com"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* PHONE */}
+                    <FormField
+                      control={form.control}
+                      name="employerPhone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-comic text-sm md:text-lg text-black">
+                            Contact Number
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="tel"
+                              className="font-body text-base md:text-lg p-3 md:p-6 border-2 md:border-4 border-black"
+                              placeholder="020 1234 5678"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* BEFORE YOU SUBMIT TEXT */}
+
+                    <div className="p-4 md:p-6 bg-muted/30 border-2 border-black rounded-lg space-y-3">
+                      <h3 className="font-comic text-lg md:text-xl text-black">
+                        What happens next?
+                      </h3>
+
+                      <p className="font-body text-sm text-black/80 leading-relaxed">
+                        To find you the best possible vehicle finance, we work with our trusted fulfillment partner, Concierge Motor Finance. When you submit this form, we will securely pass your details to their team, who will contact you on our behalf to finalize your quote and guide you through the next steps.
+                      </p>
+                    </div>
+
+                    {/* CONSENT CHECKBOXES */}
+
+                    <div className="space-y-4 border-2 border-black p-4 md:p-6 rounded-lg bg-white">
+
+                      {/* CHECKBOX 1 */}
+
+                      <FormField
+                        control={form.control}
+                        name="partnerConsent"
+                        render={({ field }) => (
+                          <FormItem className="flex items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-body leading-relaxed mt-0">
+                              I understand and consent to <strong>Whoosh Car Finance </strong>
+                              securely transferring my application details to our fulfillment
+                              partner, <strong>Concierge Motor Finance</strong>. I agree to be
+                              contacted by them via phone or email to discuss my vehicle
+                              finance options.
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* CHECKBOX 2 */}
+
+                      <FormField
+                        control={form.control}
+                        name="creditConsent"
+                        render={({ field }) => (
+                          <FormItem className="flex items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-body leading-relaxed mt-0">
+                              I consent to a <strong>soft credit search</strong> being
+                              conducted to check my eligibility. I understand this will not
+                              impact my credit score. I acknowledge that if I choose to proceed with a specific lender later, a hard credit search will be required, but I will be notified before this happens.
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* CHECKBOX 3 */}
+
+                      <FormField
+                        control={form.control}
+                        name="termsConsent"
+                        render={({ field }) => (
+                          <FormItem className="flex items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-body leading-relaxed mt-0">
+                              By submitting this application, I confirm that the information
+                              provided is accurate and I agree to Whoosh Car Finance's{" "}
+                              <a
+                                href="/terms-conditions"
+                                target="_blank"
+                                className="text-primary underline"
+                              >
+                                Terms and Conditions
+                              </a>,{" "}
+                              <a
+                                href="/terms-of-business"
+                                target="_blank"
+                                className="text-primary underline"
+                              >
+                                Terms of Business
+                              </a>{" "}
+                              and{" "}
+                              <a
+                                href="/privacy-policy"
+                                target="_blank"
+                                className="text-primary underline"
+                              >
+                                Privacy Policy
+                              </a>.
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+
+                    </div>
+
+                  </div>
+                </div>
+              )}
+
+              {/* Step 13: Marital Status */}
+              {currentStep === 13 && (
                 <div className="space-y-4 md:space-y-10">
                   <div className="text-center">
                     <h1 className="font-comic text-2xl md:text-4xl lg:text-5xl text-black mb-3 md:mb-6">
@@ -1108,8 +1547,8 @@ const Apply = () => {
                 </div>
               )}
 
-              {/* Step 13: Address History (3 Years Required) */}
-              {currentStep === 13 && (
+              {/* Step 11: Address History (3 Years Required) */}
+              {currentStep === 11 && (
                 <div className="space-y-4 md:space-y-10">
                   <div className="text-center">
                     <h1 className="font-comic text-2xl md:text-4xl lg:text-5xl text-black mb-3 md:mb-6">
@@ -1264,150 +1703,6 @@ const Apply = () => {
                 </div>
               )}
 
-              {/* Step 14: Consents */}
-              {currentStep === 14 && (
-                <div className="space-y-4 md:space-y-10">
-                  <div className="text-center">
-                    <h1 className="font-comic text-2xl md:text-4xl lg:text-5xl text-black mb-3 md:mb-6">
-                      <span className="text-primary">FINAL STEP!</span> Consents
-                    </h1>
-                    <p className="font-body text-sm md:text-xl text-black/80">
-                      Please review and accept the following
-                    </p>
-                  </div>
-
-                  <div className="space-y-6 max-w-3xl mx-auto px-2 md:px-0">
-                    <FormField
-                      control={form.control}
-                      name="creditCheckConsent"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border-2 md:border-4 border-black p-4 md:p-6 bg-white">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              className="mt-1"
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="font-comic text-base md:text-lg text-black cursor-pointer">
-                              Soft Search Consent *
-                            </FormLabel>
-                            <p className="font-body text-xs md:text-sm text-black/70">
-                            I consent to Whoosh Finance conducting a soft search with credit reference agencies to assess my eligibility. This will not affect my credit score.
-                          </p>
-                          {form.formState.errors.creditCheckConsent && (
-                            <p className="text-destructive text-sm font-semibold mt-2">
-                              {form.formState.errors.creditCheckConsent.message}
-                            </p>
-                          )}
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="termsConsent"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border-2 md:border-4 border-black p-4 md:p-6 bg-white">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            className="mt-1"
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel className="font-comic text-base md:text-lg text-black cursor-pointer">
-                            Terms & Conditions *
-                          </FormLabel>
-                          <p className="font-body text-xs md:text-sm text-black/70">
-                            I have read and agree to the{" "}
-                            <a href="/terms-conditions" target="_blank" className="text-primary underline hover:text-primary/80">
-                              Terms & Conditions
-                            </a>{" "}
-                            and{" "}
-                            <a href="/terms-of-business" target="_blank" className="text-primary underline hover:text-primary/80">
-                              Terms of Business
-                            </a>.
-                          </p>
-                          {form.formState.errors.termsConsent && (
-                            <p className="text-destructive text-sm font-semibold mt-2">
-                              {form.formState.errors.termsConsent.message}
-                            </p>
-                          )}
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="privacyConsent"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border-2 md:border-4 border-black p-4 md:p-6 bg-white">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            className="mt-1"
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel className="font-comic text-base md:text-lg text-black cursor-pointer">
-                            Privacy Policy *
-                          </FormLabel>
-                          <p className="font-body text-xs md:text-sm text-black/70">
-                            I have read and agree to the{" "}
-                            <a href="/privacy-policy" target="_blank" className="text-primary underline hover:text-primary/80">
-                              Privacy Policy
-                            </a>{" "}
-                            and understand how my data will be used.
-                          </p>
-                          {form.formState.errors.privacyConsent && (
-                            <p className="text-destructive text-sm font-semibold mt-2">
-                              {form.formState.errors.privacyConsent.message}
-                            </p>
-                          )}
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-
-                    <FormField
-                      control={form.control}
-                      name="marketingConsent"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border-2 md:border-4 border-black p-4 md:p-6 bg-accent/20">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              className="mt-1"
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="font-comic text-base md:text-lg text-black cursor-pointer">
-                              Marketing Communications (Optional)
-                            </FormLabel>
-                            <p className="font-body text-xs md:text-sm text-black/70">
-                              I would like to receive updates, special offers, and promotional materials from Whoosh Finance via email and SMS.
-                            </p>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="p-4 md:p-6 bg-muted/30 border-2 border-border rounded-lg">
-                      <p className="font-body text-xs md:text-sm text-black/70 leading-relaxed">
-                        <strong className="font-comic text-black">Important:</strong> By submitting this application, you confirm that all information provided is accurate and complete. Providing false information may result in your application being declined or any agreement being terminated.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Navigation Buttons */}
               <div className="flex items-center justify-between mt-6 md:mt-12 pt-4 md:pt-8 border-t-2 md:border-t-4 border-black">
                 <Button
@@ -1443,13 +1738,15 @@ const Apply = () => {
                   </Button>
                 )}
               </div>
+            <p className="text-center text-[11px] sm:text-xs text-muted-foreground font-body mt-3 opacity-80">10.9% Rep. APR (From 9.9%) Credit broker, not a lender</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground font-body leading-relaxed mt-6">Representative example: Borrowing £7,000 over 60 months at a representative APR of 21.9% (fixed), 60 monthly payments of £192.93. Total amount payable: £11,575.80. Total cost of credit: £4,575.80. This is an example only, all finance subject to status.</p>
             </div>
             </Form>
           </div>
         </main>
 
         {/* Regulatory Legal Text */}
-        <div className="bg-gradient-to-br from-primary/10 to-secondary/10 py-6 md:py-8">
+        {/* <div className="bg-gradient-to-br from-primary/10 to-secondary/10 py-6 md:py-8">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl">
               <div className="text-black/60 text-xs leading-relaxed text-justify">
@@ -1468,13 +1765,15 @@ const Apply = () => {
                   You can also find information about referring a complaint to the Financial Ombudsman Service (FOS) at <a href="http://financial-ombudsman.org.uk" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">http://financial-ombudsman.org.uk</a>.
                 </p>
                 <p className="mb-3 md:mb-4">
-                  Applicants must be 18 or over, terms and conditions apply, guarantees and indemnities may be required. 
+                  Applicants must be 21 or over, terms and conditions apply, guarantees and indemnities may be required. 
                   We are registered with the Office of the Information Commissioner (No. ZB989798).
                 </p>
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
+
+        <Footer />
       </div>
     </>
   );

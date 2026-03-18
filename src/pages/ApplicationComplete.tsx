@@ -1,17 +1,47 @@
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Clock, FileText, Phone, Mail, Home } from "lucide-react";
-import { Link } from "react-router-dom";
+import { CheckCircle, XCircle, Loader2, Shield, Home, Phone, Mail, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const ApplicationComplete = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAccepted, setIsAccepted] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    // Progress animation - 60 seconds total, update every 600ms
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 600);
+
+    // After 60 seconds, show result
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      // Simulate acceptance (in real app, this would come from backend)
+      setIsAccepted(Math.random() > 0.2); // 80% acceptance rate for demo
+    }, 60000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(progressInterval);
+    };
+  }, []);
+
   return (
     <>
       <Helmet>
-        <title>Application Complete - Whoosh Car Finance</title>
-        <meta name="description" content="Your car finance application has been submitted successfully. Here's what happens next." />
+        <title>{isLoading ? "Comparing Offers" : "Application Result"} - Whoosh Car Finance</title>
+        <meta name="description" content="We're comparing car finance offers for you." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -19,153 +49,137 @@ const ApplicationComplete = () => {
         <Header />
         
         <div className="container mx-auto px-4 pt-8 pb-16 md:pt-12 md:pb-24">
-          {/* Success Header */}
-          <div className="text-center mb-8 md:mb-12">
-            <h1 className="font-comic text-3xl md:text-5xl lg:text-6xl text-black mb-4">
-              <span className="text-primary">BOOM!</span> Application Submitted!
-            </h1>
-            <p className="font-body text-lg md:text-2xl text-black/80 max-w-2xl mx-auto">
-              Thank you for choosing Whoosh Car Finance. Your application is now being reviewed.
-            </p>
-          </div>
-
-          {/* What Happens Next Section */}
-          <div className="max-w-4xl mx-auto space-y-6 mb-12">
-            <Card className="border-4 border-black shadow-comic p-6 md:p-8 bg-white">
-              <h2 className="font-comic text-2xl md:text-3xl text-primary mb-6 flex items-center gap-2">
-                <Clock className="w-8 h-8" />
-                What Happens Next?
-              </h2>
-
-              <div className="space-y-6">
-                {/* Step 1 */}
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-comic text-xl border-2 border-black">
-                    1
-                  </div>
-                  <div>
-                    <h3 className="font-comic text-xl text-black mb-2">Soft Search Review (Next 24 hours)</h3>
-                    <p className="font-body text-black/70">
-                      We'll perform a soft search on your application. This won't affect your credit score. 
-                      Our team will review your details and match you with suitable lenders from our panel.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Step 2 */}
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-secondary text-white rounded-full flex items-center justify-center font-comic text-xl border-2 border-black">
-                    2
-                  </div>
-                  <div>
-                    <h3 className="font-comic text-xl text-black mb-2">Decision & Contact (Within 48 hours)</h3>
-                    <p className="font-body text-black/70">
-                      One of our finance specialists will contact you via phone or email with a decision. 
-                      If approved, we'll discuss your finance options and next steps.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Step 3 */}
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center font-comic text-xl border-2 border-black">
-                    3
-                  </div>
-                  <div>
-                    <h3 className="font-comic text-xl text-black mb-2">Documentation & Verification</h3>
-                    <p className="font-body text-black/70">
-                      We may need to verify some information. Please have the following documents ready:
-                    </p>
-                    <ul className="mt-2 space-y-1 font-body text-sm text-black/70 list-disc list-inside">
-                      <li>Proof of identity (Passport or Driving Licence)</li>
-                      <li>Proof of address (Recent utility bill or bank statement)</li>
-                      <li>Bank statements (Last 3 months)</li>
-                      <li>Proof of income (Payslips or tax returns)</li>
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Step 4 */}
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-comic text-xl border-2 border-black">
-                    4
-                  </div>
-                  <div>
-                    <h3 className="font-comic text-xl text-black mb-2">Final Approval & Fund Release</h3>
-                    <p className="font-body text-black/70">
-                      Once everything is verified and you've chosen your vehicle, we'll finalize your agreement. 
-                      Funds will be released directly to the dealer, and you'll be driving away in no time!
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Important Information */}
-            <Card className="border-4 border-black shadow-comic p-6 md:p-8 bg-accent/10">
-              <h2 className="font-comic text-2xl text-black mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6" />
-                Important Information
-              </h2>
-              <div className="space-y-3 font-body text-black/80">
-                <p className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span>Your soft search will <strong>not affect your credit score</strong></span>
-                </p>
-                <p className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span>Check your email and phone for updates from our team</span>
-                </p>
-                <p className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span>Your application reference will be sent to your email</span>
-                </p>
-                <p className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span>Most decisions are made within 24-48 hours</span>
-                </p>
-              </div>
-            </Card>
-
-            {/* Contact Section */}
-            <Card className="border-4 border-black shadow-comic p-6 md:p-8 bg-white">
-              <h2 className="font-comic text-2xl text-black mb-4">Need Help?</h2>
-              <p className="font-body text-black/70 mb-4">
-                If you have any questions about your application, our friendly team is here to help:
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 font-body text-black/80">
-                  <Phone className="w-5 h-5 text-primary" />
-                  <a href="tel:01234567890" className="hover:text-primary transition-colors">
-                    0123 456 7890
-                  </a>
-                </div>
-                <div className="flex items-center gap-3 font-body text-black/80">
-                  <Mail className="w-5 h-5 text-primary" />
-                  <a href="mailto:apply@whooshfinance.co.uk" className="hover:text-primary transition-colors">
-                    apply@whooshfinance.co.uk
-                  </a>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-center items-center max-w-2xl mx-auto">
-            <Button 
+          {/* Back Button - Always visible */}
+          <div className="max-w-2xl mx-auto mb-4">
+            <Button
+              variant="outline"
               asChild
-              size="lg"
-              className="font-comic text-lg px-8 py-6 w-full sm:w-auto"
+              className="font-comic border-2 border-black bg-white"
             >
-              <Link to="/">
-                <Home className="w-5 h-5 mr-2" />
-                Return Home
+              <Link to="/marketing-preferences">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
               </Link>
             </Button>
           </div>
-        </div>
 
-        <Footer />
+          {isLoading ? (
+            // Loading State
+            <div className="max-w-2xl mx-auto text-center">
+              <Card className="border-4 border-black shadow-comic p-8 md:p-12 bg-white">
+                <div className="mb-8">
+                  <div className="relative w-24 h-24 mx-auto mb-6">
+                    <Loader2 className="w-24 h-24 text-primary animate-spin" />
+                  </div>
+                  <h1 className="font-comic text-2xl md:text-4xl text-black mb-4">
+                    <span className="text-primary">WHOOSH!</span> Comparing Offers...
+                  </h1>
+                  <p className="font-body text-lg text-black/80 mb-6">
+                    We're searching our panel of lenders to find the best deals for you
+                  </p>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="w-full bg-muted rounded-full h-4 mb-4 border-2 border-black overflow-hidden">
+                  <div 
+                    className="bg-primary h-full transition-all duration-100 ease-linear"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <p className="font-comic text-sm text-black/60 mb-8">{progress}% complete</p>
+
+                {/* No Credit Impact Notice */}
+                <div className="flex items-center justify-center gap-2 p-4 bg-secondary/10 rounded-lg border-2 border-secondary">
+                  <Shield className="w-6 h-6 text-secondary" />
+                  <p className="font-comic text-base text-black">
+                    <strong>No impact</strong> on your credit score
+                  </p>
+                </div>
+
+                <div className="mt-8 space-y-2 text-left">
+                  <p className={`font-body text-sm flex items-center gap-2 transition-opacity ${progress > 20 ? 'text-primary' : 'text-black/40'}`}>
+                    <CheckCircle className="w-4 h-4" /> Verifying your details
+                  </p>
+                  <p className={`font-body text-sm flex items-center gap-2 transition-opacity ${progress > 40 ? 'text-primary' : 'text-black/40'}`}>
+                    <CheckCircle className="w-4 h-4" /> Searching lender panel
+                  </p>
+                  <p className={`font-body text-sm flex items-center gap-2 transition-opacity ${progress > 60 ? 'text-primary' : 'text-black/40'}`}>
+                    <CheckCircle className="w-4 h-4" /> Comparing interest rates
+                  </p>
+                  <p className={`font-body text-sm flex items-center gap-2 transition-opacity ${progress > 80 ? 'text-primary' : 'text-black/40'}`}>
+                    <CheckCircle className="w-4 h-4" /> Finalizing offers
+                  </p>
+                </div>
+              </Card>
+            </div>
+          ) : isAccepted ? (
+            // Accepted - redirect to submission confirmation
+            (() => {
+              navigate("/application-submitted");
+              return null;
+            })()
+          ) : (
+            // Not Accepted State
+            <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-black shadow-comic animate-scale-in">
+                  <XCircle className="w-12 h-12 text-black/50" />
+                </div>
+                <h1 className="font-comic text-3xl md:text-5xl text-black mb-4">
+                  Not This Time
+                </h1>
+                <p className="font-body text-lg text-black/80">
+                  Unfortunately, we couldn't find a suitable offer right now.
+                </p>
+              </div>
+
+              <Card className="border-4 border-black shadow-comic p-6 md:p-8 bg-white mb-6">
+                <h2 className="font-comic text-xl md:text-2xl text-black mb-4">What Can You Do?</h2>
+                <div className="space-y-4 font-body text-black/80">
+                  <p className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span><strong>Don't worry</strong> - this soft search has not affected your credit score.</span>
+                  </p>
+                  <p className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span>You can <strong>reapply in 30 days</strong> when your circumstances may have changed.</span>
+                  </p>
+                  <p className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span>Consider <strong>building your credit score</strong> with on-time payments and reducing existing debt.</span>
+                  </p>
+                </div>
+              </Card>
+
+              <Card className="border-4 border-black shadow-comic p-6 bg-accent/10 mb-8">
+                <h3 className="font-comic text-lg text-black mb-3">Questions? We're Here to Help</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 font-body text-black/80">
+                    <Phone className="w-4 h-4 text-primary" />
+                    <a href="tel:01onal234567890" className="hover:text-primary transition-colors text-sm">
+                      0123 456 7890
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3 font-body text-black/80">
+                    <Mail className="w-4 h-4 text-primary" />
+                    <a href="mailto:support@whooshfinance.co.uk" className="hover:text-primary transition-colors text-sm">
+                      support@whooshfinance.co.uk
+                    </a>
+                  </div>
+                </div>
+              </Card>
+
+              <div className="flex justify-center">
+                <Button asChild size="lg" className="font-comic text-lg px-8 py-6">
+                  <Link to="/">
+                    <Home className="w-5 h-5 mr-2" />
+                    Return Home
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

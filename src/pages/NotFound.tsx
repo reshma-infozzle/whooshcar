@@ -19,7 +19,7 @@ const NotFound = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-24 flex-1 flex items-center justify-center">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 my-4 text-center">
           <div className="comic-panel bg-white/95 p-12 border-4 border-black shadow-comic-lg max-w-2xl mx-auto">
             <div className="mb-8">
               <Car className="w-24 h-24 text-primary mx-auto mb-6 animate-bounce" />
