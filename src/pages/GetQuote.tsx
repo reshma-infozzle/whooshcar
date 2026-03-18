@@ -63,7 +63,7 @@ const GetQuote = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-6 sm:py-8 max-w-3xl">
+      <main className="flex-1 container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
         {/* Hero Section */}
         <div className="text-center mb-6">
           <h1 className="text-3xl sm:text-4xl font-comic font-black text-foreground leading-tight mb-2">
