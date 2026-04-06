@@ -168,7 +168,7 @@ const HowItWorks: React.FC = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "https://admin.whooshcar.testingweblink.com/api/how_it_works"
+          "https://admin.whooshcarfinance.co.uk/api/how_it_works"
         );
         if (!res.ok) throw new Error("Failed to fetch");
 
@@ -375,7 +375,7 @@ const HowItWorks: React.FC = () => {
                 </div>
               ))}
             </div>
-            <div className="max-w-4xl mx-auto text-[12px] mt-12"><p><strong>Representative Example: </strong>Borrowing £7,000 over 60 months at a representative APR of 21.9% (fixed), 60 monthly payments of £192.93. Total amount payable: £11,575.80. Total cost of credit: £4,575.80. This is an example only, all finance subject to status. Example only. Lender fees may apply. All finance subject to status.</p></div>
+            <div className="max-w-4xl mx-auto text-[12px] mt-12"><p><strong>Representative Example: </strong>Borrowing £23000 over 60 months at a representative APR of 10.9%, an annual interest rate of 10.87% (fixed), and a deposit of £0.00 would be 60 monthly payments of £493.16. Total amount payable: £28,589.60. Total cost of credit: £6,589.60. This is an example only; all finance subject to status. Lender fees may apply.</p></div>
             </div>
           </div>
         </section>

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Search, CheckCircle, Car } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const API_URL = "https://admin.whooshcar.testingweblink.com/api/home";
+const API_URL = "https://admin.whooshcarfinance.co.uk/api/home";
 
 interface HomeData {
   how_whoosh_works_title: string;

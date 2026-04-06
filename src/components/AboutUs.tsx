@@ -3,7 +3,7 @@ import { MapPin, Heart, Users, Clock, Shield, TrendingUp, Award, Zap } from "luc
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-const API_URL = "https://admin.whooshcar.testingweblink.com/api/home";
+const API_URL = "https://admin.whooshcarfinance.co.uk/api/home";
 
 interface HomeData {
   who_are_whoosh_title: string;

@@ -19,7 +19,7 @@ export const Header = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/navigations")
+    fetch("https://admin.whooshcarfinance.co.uk/api/navigations")
       .then(res => {
         if (!res.ok) throw new Error("API failed");
         return res.json();

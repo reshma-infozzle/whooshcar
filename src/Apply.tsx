@@ -62,13 +62,11 @@ const Apply = () => {
         postcode: "",
         address: "",
         yearsAtAddress: "",
-        monthsAtAddress: "",
       }],
       employmentHistory: [{
         employerName: "",
         jobTitle: "",
         yearsAtEmployment: "",
-        monthsAtEmployment: "",
       }],
       employmentStatus: "",
       employerPhone: "",
@@ -152,22 +150,6 @@ const Apply = () => {
         message: "You must be a UK resident to proceed with this application",
       });
       return;
-    }
-
-    if (field === "employmentStatus") {
-      const isEmployed =
-        value === "Full-time Employed" ||
-        value === "Part-time Employed";
-
-      if (!isEmployed) {
-        // remove employment history completely
-        form.setValue("employmentHistory", []);
-      } else {
-        // ensure at least one row exists when employed
-        form.setValue("employmentHistory", [
-          { employerName: "", jobTitle: "", yearsAtEmployment: "" }
-        ]);
-      }
     }
 
     setTimeout(() => {
@@ -317,10 +299,7 @@ const Apply = () => {
                 JobTitle: emp.jobTitle || "",
                 Employer: emp.employerName || "",
                 TimeAtEmployerYears: emp.yearsAtEmployment || "",
-                TimeAtEmployerMonths:
-                  emp.yearsAtEmployment === "0"
-                    ? emp.monthsAtEmployment || "0"
-                    : "0"
+                TimeAtEmployerMonths: ""
               }))
             : [
                 {
@@ -342,10 +321,7 @@ const Apply = () => {
             County: "",
             Postcode: addr.postcode || "",
             TimeAtAddressYears: addr.yearsAtAddress || "",
-            TimeAtAddressMonths:
-             addr.yearsAtAddress === "0"
-                    ? addr.monthsAtAddress || "0"
-                    : "0",
+            TimeAtAddressMonths: "",
             BuildingNumber: "",
             CountryAlphaCode: getCountryCode(),
             DependentLocality: ""
@@ -482,59 +458,20 @@ const Apply = () => {
 
   const getTotalAddressYears = () => {
     const addressHistory = form.watch("addressHistory");
-
-    const total = addressHistory.reduce((sum, addr) => {
+    return addressHistory.reduce((sum, addr) => {
       const years = parseInt(addr.yearsAtAddress || "0");
-      const months =
-        addr.yearsAtAddress === "0"
-          ? parseInt(addr.monthsAtAddress || "0")
-          : 0;
-
-      return sum + years + months / 12;
+      return sum + years;
     }, 0);
-
-    return Math.round(total * 100) / 100;
-  };
-
-  const getRemainingAddress = () => {
-    const total = getTotalAddressYears();
-    const remaining = Math.max(0, 3 - total);
-
-    const years = Math.floor(remaining);
-    const months = Math.round((remaining - years) * 12);
-
-    return { years, months };
   };
 
   const getTotalEmploymentYears = () => {
     const employmentHistory = form.watch("employmentHistory");
-
-    const total = employmentHistory.reduce((sum, emp) => {
+    return employmentHistory.reduce((sum, emp) => {
       const years = parseInt(emp.yearsAtEmployment || "0");
-      const months =
-        emp.yearsAtEmployment === "0"
-          ? parseInt(emp.monthsAtEmployment || "0")
-          : 0;
-
-      return sum + years + months / 12;
+      if (years === 5) return sum + 5;
+      return sum + years;
     }, 0);
-
-    return Math.round(total * 100) / 100;
   };
-
-  const getRemainingEmployment = () => {
-    const total = getTotalEmploymentYears();
-    const remaining = 3 - total;
-
-    const years = Math.floor(remaining);
-    const months = Math.round((remaining - years) * 12);
-
-    return { years, months };
-  };
-
-  const remaining = getRemainingEmployment();
-
-  const remainingAddress = getRemainingAddress();
 
   const addEmployment = () => {
     const current = form.getValues("employmentHistory");
@@ -942,36 +879,6 @@ const Apply = () => {
                                   </FormItem>
                                 )}
                               />
-
-                              {form.watch(`employmentHistory.${index}.yearsAtEmployment`) === "0" && (
-                                <FormField
-                                  control={form.control}
-                                  name={`employmentHistory.${index}.monthsAtEmployment`}
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Months *</FormLabel>
-                                      <Select
-                                        value={field.value}
-                                        onValueChange={(value) => field.onChange(value)}
-                                      >
-                                        <FormControl>
-                                          <SelectTrigger>
-                                            <SelectValue placeholder="Select months" />
-                                          </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                          {[...Array(11)].map((_, i) => (
-                                            <SelectItem key={i + 1} value={String(i + 1)}>
-                                              {i + 1} month{i + 1 > 1 ? "s" : ""}
-                                            </SelectItem>
-                                          ))}
-                                        </SelectContent>
-                                      </Select>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                              )}
                             </div>
                           ))}
 
@@ -989,11 +896,8 @@ const Apply = () => {
 
                           {employmentTouched && getTotalEmploymentYears() < 3 && (
                             <p className="text-destructive text-center font-semibold">
-                              ⚠️ You need {remaining.years} year(s) and {remaining.months} month(s) of employment
+                              ⚠️ You need {3 - getTotalEmploymentYears()} more year(s) of employment
                             </p>
-                            // <p className="text-destructive text-center font-semibold">
-                            //   ⚠️ You need {3 - getTotalEmploymentYears()} more year(s) of employment
-                            // </p>
                           )}        
 
                           <p className="text-xs text-center">
@@ -1452,36 +1356,6 @@ const Apply = () => {
                               </FormItem>
                             )}
                           />
-
-                          {form.watch(`addressHistory.${index}.yearsAtAddress`) === "0" && (
-                            <FormField
-                              control={form.control}
-                              name={`addressHistory.${index}.monthsAtAddress`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Months *</FormLabel>
-                                  <Select
-                                    value={field.value}
-                                    onValueChange={(value) => field.onChange(value)}
-                                  >
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select months" />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      {[...Array(11)].map((_, i) => (
-                                        <SelectItem key={i + 1} value={String(i + 1)}>
-                                          {i + 1} month{i + 1 > 1 ? "s" : ""}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          )}
                         </div>
                       ))}
 
@@ -1499,7 +1373,7 @@ const Apply = () => {
 
                       {addressTouched && getTotalAddressYears() < 3 && (
                         <p className="text-sm text-destructive text-center font-body font-semibold">
-                          ⚠️ You need {remainingAddress.years} year(s) and {remainingAddress.months} month(s) of address history
+                          ⚠️ You need {3 - getTotalAddressYears()} more year(s) of address history
                         </p>
                       )}
                     </div>

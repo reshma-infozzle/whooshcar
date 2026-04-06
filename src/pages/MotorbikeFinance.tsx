@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Bike, Zap, Calculator, Users, CheckCircle, Wind } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const API_URL = "https://admin.whooshcar.testingweblink.com/api/MotorFinance";
+const API_URL = "https://admin.whooshcarfinance.co.uk/api/MotorFinance";
 
 type MotorcycleType = { motorbike: string };
 

@@ -20,7 +20,7 @@ const TermsOfBusiness = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/termofbusiness")
+    fetch("https://admin.whooshcarfinance.co.uk/api/termofbusiness")
       .then((res) => res.json())
       .then((res: TermsOfBusinessApiResponse) => {
         if (!res?.data?.length) {

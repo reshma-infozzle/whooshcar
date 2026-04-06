@@ -111,7 +111,7 @@ const CarFinance = () => {
   useEffect(() => {
     const loadAPI = async () => {
       try {
-        const res = await fetch("https://admin.whooshcar.testingweblink.com/api/CarFinance");
+        const res = await fetch("https://admin.whooshcarfinance.co.uk/api/CarFinance");
         const json = await res.json();
         setData(json.data[0]);
       } catch (e) {

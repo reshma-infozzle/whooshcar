@@ -74,7 +74,7 @@ const Calculator = () => {
   useEffect(() => {
     const fetchCalculator = async () => {
       try {
-        const res = await fetch("https://admin.whooshcar.testingweblink.com/api/calculator");
+        const res = await fetch("https://admin.whooshcarfinance.co.uk/api/calculator");
         const json: ApiResponse = await res.json();
         if (json.status === "success" && json.data.length > 0) {
           setApiData(json.data[0]);
@@ -86,6 +86,14 @@ const Calculator = () => {
       }
     };
     fetchCalculator();
+  }, []);
+
+  useEffect(() => {
+    if (window.fbq) {
+      window.fbq('track', 'ViewContent', {
+        content_name: 'Calculator'
+      });
+    }
   }, []);
 
   // APR mapping

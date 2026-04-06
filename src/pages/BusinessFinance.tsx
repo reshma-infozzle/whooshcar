@@ -25,7 +25,7 @@ const BusinessFinance = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "https://admin.whooshcar.testingweblink.com/api/BusinessFinance"
+          "https://admin.whooshcarfinance.co.uk/api/BusinessFinance"
         );
         const json = await res.json();
 

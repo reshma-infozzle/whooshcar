@@ -13,7 +13,7 @@ export const lookupPostcode = async (
     const cleanPostcode = postcode.replace(/\s/g, "").toUpperCase();
 
     const response = await fetch(
-      `https://api.ideal-postcodes.co.uk/v1/postcodes/${cleanPostcode}?api_key=ak_mm4iki6cXzXHYaOdmddi9xTGeeH1D`
+      `https://api.ideal-postcodes.co.uk/v1/postcodes/${cleanPostcode}?api_key=ak_mdsk9skhW9BLTFf3ldw65I5DDWZf3`
     );
 
     if (!response.ok) {

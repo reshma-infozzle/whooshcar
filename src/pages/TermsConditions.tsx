@@ -20,7 +20,7 @@ const TermsConditions = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/termandcondition")
+    fetch("https://admin.whooshcarfinance.co.uk/api/termandcondition")
       .then((res) => res.json())
       .then((res: TermsApiResponse) => {
         if (!res?.data?.length) {

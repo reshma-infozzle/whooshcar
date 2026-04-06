@@ -14,7 +14,7 @@ export const Footer = () => {
   const [loading, setLoading] = useState(true);
  
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/footer")
+    fetch("https://admin.whooshcarfinance.co.uk/api/footer")
       .then((res) => res.json())
       .then((json) => {
         if (json.status === "success" && json.data?.length) {

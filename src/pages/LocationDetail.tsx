@@ -25,7 +25,7 @@ import { Helmet } from 'react-helmet-async';
 // OPTIONAL (recommended) – if you want sanitization:
 // import DOMPurify from 'dompurify';
 
-const API_URL = 'https://admin.whooshcar.testingweblink.com/api/locations';
+const API_URL = 'https://admin.whooshcarfinance.co.uk/api/locations';
 
 interface FeatureItem {
   item_title?: string;

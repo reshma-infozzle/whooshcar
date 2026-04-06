@@ -5,6 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Check, Shield, Car, Star } from "lucide-react";
 import { getRepresentativeExample, formatRepresentativeDisclosure } from "@/lib/mocks/representativeExample";
 import { Footer } from "@/components/Footer";
+import { useEffect } from "react";
 
 
 const GetQuote = () => {
@@ -43,6 +44,14 @@ const GetQuote = () => {
     { icon: Shield, text: "SOFT CREDIT SEARCH FIRST" },
     { icon: Check, text: "MOST CREDIT TYPES CONSIDERED" },
   ];
+
+  useEffect(() => {
+    if (window.fbq) {
+      window.fbq('track', 'ViewContent', {
+        content_name: 'Get Quote'
+      });
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

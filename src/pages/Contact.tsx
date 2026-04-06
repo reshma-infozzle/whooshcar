@@ -143,7 +143,7 @@ const Contact = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          "https://admin.whooshcar.testingweblink.com/api/contacts"
+          "https://admin.whooshcarfinance.co.uk/api/contacts"
         );
         const json = await res.json();
         if (json?.data?.length) setContactData(json.data[0]);
@@ -164,7 +164,7 @@ const Contact = () => {
 
     try {
       const res = await fetch(
-        "https://admin.whooshcar.testingweblink.com/api/save_leads",
+        "https://admin.whooshcarfinance.co.uk/api/save_leads",
         {
           method: "POST",
           headers: {

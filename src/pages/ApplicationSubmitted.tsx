@@ -5,8 +5,14 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Mail, Shield, Home, Handshake } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
+import { useEffect } from "react";
 
 const ApplicationSubmitted = () => {
+  useEffect(() => {
+    if (window.fbq) {
+      window.fbq('track', 'Lead');
+    }
+  }, []);
   return (
     <>
       <Helmet>

@@ -20,7 +20,7 @@ import {
   Percent,
 } from "lucide-react";
 
-const API_URL = "https://admin.whooshcar.testingweblink.com/api/lenders";
+const API_URL = "https://admin.whooshcarfinance.co.uk/api/lenders";
 
 const IMAGE_BASE_URL = "https://admin.whooshcarfinance.co.uk/storage/";
 

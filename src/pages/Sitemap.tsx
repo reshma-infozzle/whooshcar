@@ -82,7 +82,7 @@ const Sitemap = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/sitemap")
+    fetch("https://admin.whooshcarfinance.co.uk/api/sitemap")
       .then((res) => res.json())
       .then((json) => {
         setData(json.data?.[0] ?? null);

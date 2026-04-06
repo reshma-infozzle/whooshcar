@@ -30,7 +30,6 @@ export const applyFormSchema = z.object({
       employerName: z.string().min(1, "Employer name is required"),
       jobTitle: z.string().min(2, "Job title is required (minimum 2 characters)"),
       yearsAtEmployment: z.string().min(1, "Please select years"),
-      monthsAtEmployment: z.string().optional(),
     })
   ).optional(),
 
@@ -88,7 +87,6 @@ export const applyFormSchema = z.object({
       postcode: z.string().min(1, "Postcode is required"),
       address: z.string().min(10, "Please enter your full address"),
       yearsAtAddress: z.string().min(1, "Please select years at address"),
-      monthsAtAddress: z.string().optional(),
     })
   ).min(1, "At least one address is required"),
 
@@ -108,18 +106,10 @@ export const applyFormSchema = z.object({
   /* ADDRESS VALIDATION */
   const totalYears = data.addressHistory.reduce((sum, addr) => {
     const years = parseInt(addr.yearsAtAddress || "0");
-
-    const months =
-      addr.yearsAtAddress === "0"
-        ? parseInt(addr.monthsAtAddress || "0")
-        : 0;
-
-    return sum + years + months / 12;
+    return sum + years;
   }, 0);
 
-  const totalYearsRounded = Math.round(totalYears * 100) / 100;
-
-  if (totalYearsRounded < 3) {
+  if (totalYears < 3) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "You must provide at least 3 years of address history",
@@ -127,22 +117,18 @@ export const applyFormSchema = z.object({
     });
   }
 
-  
-
   /* EMPLOYMENT VALIDATION */
   if (
     data.employmentStatus === "Full-time Employed" ||
     data.employmentStatus === "Part-time Employed"
   ) {
-    data.employmentHistory?.forEach((job, index) => {
-      if (job.yearsAtEmployment === "0" && !job.monthsAtEmployment) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Please select months",
-          path: ["employmentHistory", index, "monthsAtEmployment"],
-        });
-      }
-    });
+    if (!data.employmentHistory || data.employmentHistory.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Employment history is required",
+        path: ["employmentHistory"],
+      });
+    }
   }
 
   /* NON-EMPLOYED VALIDATION */

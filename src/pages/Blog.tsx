@@ -133,7 +133,7 @@ const Blog = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "https://admin.whooshcar.testingweblink.com/api/blogs"
+          "https://admin.whooshcarfinance.co.uk/api/blogs"
         );
         const json = await res.json();
 
@@ -262,7 +262,7 @@ const Blog = () => {
                   <CardContent className="p-0">
                     <div className="relative h-48 overflow-hidden border-b-4 border-black">
                       <img
-                        src={`https://admin.whooshcar.testingweblink.com/storage/${post.blog_image}`}
+                        src={`https://admin.whooshcarfinance.co.uk/storage/${post.blog_image}`}
                         alt={post.blog_title}
                         className="w-full h-full object-cover"
                       />

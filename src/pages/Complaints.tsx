@@ -66,7 +66,7 @@ const Complaints = () => {
   const [loading, setLoading] = useState(true);
  
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/complaints")
+    fetch("https://admin.whooshcarfinance.co.uk/api/complaints")
       .then((res) => res.json())
       .then((json) => {
         if (json.status === "success" && json.data?.length) {

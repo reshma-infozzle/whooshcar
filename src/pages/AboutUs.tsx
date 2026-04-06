@@ -95,7 +95,7 @@ const AboutUs = () => {
     const fetchAbout = async () => {
       try {
         setLoading(true);
-        const res = await fetch("https://admin.whooshcar.testingweblink.com/api/about_us");
+        const res = await fetch("https://admin.whooshcarfinance.co.uk/api/about_us");
         const json = await res.json();
         setData(json.data[0]);
       } catch (err) {

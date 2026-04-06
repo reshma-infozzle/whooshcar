@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Link } from "react-router-dom";
 
-const API_URL = "https://admin.whooshcar.testingweblink.com/api/locations";
+const API_URL = "https://admin.whooshcarfinance.co.uk/api/locations";
 
 type ApiLocationItem = {
   finance_in_location_description: ReactNode;

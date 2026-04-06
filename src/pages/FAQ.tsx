@@ -79,7 +79,7 @@ const FAQ = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "https://admin.whooshcar.testingweblink.com/api/faqs"
+          "https://admin.whooshcarfinance.co.uk/api/faqs"
         );
         const json = await res.json();
 

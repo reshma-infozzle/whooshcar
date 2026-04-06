@@ -20,7 +20,7 @@ const PrivacyPolicy = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/privacy_policy")
+    fetch("https://admin.whooshcarfinance.co.uk/api/privacy_policy")
       .then((res) => res.json())
       .then((res: PrivacyPolicyApiResponse) => {
         if (!res?.data?.length) {

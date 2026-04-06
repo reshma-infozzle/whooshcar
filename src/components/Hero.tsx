@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Car, Shield, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const API_URL = "https://admin.whooshcar.testingweblink.com/api/home";
+const API_URL = "https://admin.whooshcarfinance.co.uk/api/home";
 
 interface HomeItem {
   id: number;
@@ -53,7 +53,7 @@ export const Hero = () => {
     data?.home_banner_image ||
     "homer-banner-images/01KCKME6MQZMPN9V70C5P2FKC0.png";
 
-  const bannerImageUrl = `https://admin.whooshcar.testingweblink.com/storage/${bannerImagePath}`;
+  const bannerImageUrl = `https://admin.whooshcarfinance.co.uk/storage/${bannerImagePath}`;
 
   return (
     <section className="relative min-h-[70vh] sm:min-h-[75vh] md:min-h-[80vh] bg-gradient-to-br from-primary/10 to-secondary/10 overflow-hidden">
@@ -175,7 +175,7 @@ export const Hero = () => {
                   />
                 )}
 
-                <p className="text-[10px] sm:text-xs text-muted-foreground font-body leading-relaxed mt-6">Representative example: Borrowing £7,000 over 60 months at a representative APR of 21.9% (fixed), 60 monthly payments of £192.93. Total amount payable: £11,575.80. Total cost of credit: £4,575.80. This is an example only, all finance subject to status.</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground font-body leading-relaxed mt-6">Representative example: Borrowing £23000 over 60 months at a representative APR of 10.9%, an annual interest rate of 10.87% (fixed), and a deposit of £0.00 would be 60 monthly payments of £493.16. Total amount payable: £28,589.60. Total cost of credit: £6,589.60. This is an example only; all finance subject to status. Lender fees may apply.</p>
               </div>
             </div>
           </div>

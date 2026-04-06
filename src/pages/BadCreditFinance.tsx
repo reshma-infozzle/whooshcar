@@ -40,7 +40,7 @@ const BadCreditFinance = () => {
     const load = async () => {
       try {
         const res = await fetch(
-          "https://admin.whooshcar.testingweblink.com/api/BadCreditFinance"
+          "https://admin.whooshcarfinance.co.uk/api/BadCreditFinance"
         );
 
         const json = await res.json();

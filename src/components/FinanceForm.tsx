@@ -62,8 +62,8 @@ export const FinanceForm = () => {
       try {
         setLoading(true);
         const [calcRes, homeRes] = await Promise.all([
-          fetch("https://admin.whooshcar.testingweblink.com/api/calculator"),
-          fetch("https://admin.whooshcar.testingweblink.com/api/home")
+          fetch("https://admin.whooshcarfinance.co.uk/api/calculator"),
+          fetch("https://admin.whooshcarfinance.co.uk/api/home")
         ]);
         if (!calcRes.ok || !homeRes.ok) throw new Error("Failed");
 

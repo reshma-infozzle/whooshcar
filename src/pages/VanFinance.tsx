@@ -186,7 +186,7 @@ const VanFinance = () => {
         setError(null);
 
         const res = await fetch(
-          "https://admin.whooshcar.testingweblink.com/api/VanFinance"
+          "https://admin.whooshcarfinance.co.uk/api/VanFinance"
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 

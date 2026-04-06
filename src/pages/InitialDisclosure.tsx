@@ -10,7 +10,7 @@ const InitialDisclosure = () => {
   const [loading, setLoading] = useState(true);
  
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/disclosure")
+    fetch("https://admin.whooshcarfinance.co.uk/api/disclosure")
       .then((res) => res.json())
       .then((json) => {
         if (json.status === "success" && json.data?.length) {

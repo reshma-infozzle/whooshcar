@@ -95,7 +95,7 @@ const BlogPost = () => {
 
         // Only list endpoint available – filter by slug on client
         const res = await fetch(
-          "https://admin.whooshcar.testingweblink.com/api/blogs"
+          "https://admin.whooshcarfinance.co.uk/api/blogs"
         );
         const json = await res.json();
         const data = json.data[0];
@@ -167,7 +167,7 @@ const BlogPost = () => {
             <div className="max-w-4xl mx-auto">
               <div className="comic-panel border-4 border-black overflow-hidden mb-8">
                 <img
-                  src={`https://admin.whooshcar.testingweblink.com/storage/${post.blog_image}`}
+                  src={`https://admin.whooshcarfinance.co.uk/storage/${post.blog_image}`}
                   alt={post.blog_title}
                   className="w-full h-64 sm:h-96 object-cover"
                 />

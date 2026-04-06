@@ -58,7 +58,7 @@ const CookiePolicy = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://admin.whooshcar.testingweblink.com/api/cookie_policy")
+    fetch("https://admin.whooshcarfinance.co.uk/api/cookie_policy")
       .then((res) => res.json())
       .then((json) => {
         if (json?.data?.length) setData(json.data[0]);
