@@ -27,9 +27,9 @@ export const applyFormSchema = z.object({
   // ✅ ADD THIS (MAIN FIX)
   employmentHistory: z.array(
     z.object({
-      employerName: z.string().optional(),
-      jobTitle: z.string().optional(),
-      yearsAtEmployment: z.string().optional(),
+      employerName: z.string().min(1, "Employer name is required"),
+      jobTitle: z.string().min(2, "Job title is required (minimum 2 characters)"),
+      yearsAtEmployment: z.string().min(1, "Please select years"),
       monthsAtEmployment: z.string().optional(),
     })
   ).optional(),
@@ -86,25 +86,21 @@ export const applyFormSchema = z.object({
   addressHistory: z.array(
     z.object({
       postcode: z.string().min(1, "Postcode is required"),
-      buildingNumber: z.string().min(1, "Building Number is required"),
-      buildingName: z.string().optional(),
-      street: z.string().min(1, "Street is required"),
-      town: z.string().min(1, "Town is required"),
-      // address: z.string().min(10, "Please enter your full address"),
+      address: z.string().min(10, "Please enter your full address"),
       yearsAtAddress: z.string().min(1, "Please select years at address"),
       monthsAtAddress: z.string().optional(),
     })
   ).min(1, "At least one address is required"),
 
   // Step 14
-  partnerConsent: z.boolean().refine(val => val === true, {
-  message: "Required",
+  partnerConsent: z.literal(true, {
+    errorMap: () => ({ message: "Required" }),
   }),
-  creditConsent: z.boolean().refine(val => val === true, {
-    message: "Required",
+  creditConsent: z.literal(true, {
+    errorMap: () => ({ message: "Required" }),
   }),
-  termsConsent: z.boolean().refine(val => val === true, {
-    message: "Required",
+  termsConsent: z.literal(true, {
+    errorMap: () => ({ message: "Required" }),
   }),
 
 }).superRefine((data, ctx) => {
@@ -131,70 +127,45 @@ export const applyFormSchema = z.object({
     });
   }
 
+  
+
   /* EMPLOYMENT VALIDATION */
-  const isEmployed =
-  ["Full-time Employed", "Part-time Employed", "Self-employed"]
-    .includes(data.employmentStatus);
-
-    /* EMPLOYED VALIDATION */
-    if (isEmployed) {
-      data.employmentHistory?.forEach((job, index) => {
-
-        if (!job.employerName) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Employer name is required",
-            path: ["employmentHistory", index, "employerName"],
-          });
-        }
-
-        if (!job.jobTitle || job.jobTitle.length < 2) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Job title is required (minimum 2 characters)",
-            path: ["employmentHistory", index, "jobTitle"],
-          });
-        }
-
-        if (!job.yearsAtEmployment) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Please select years",
-            path: ["employmentHistory", index, "yearsAtEmployment"],
-          });
-        }
-
-        if (job.yearsAtEmployment === "0" && !job.monthsAtEmployment) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Please select months",
-            path: ["employmentHistory", index, "monthsAtEmployment"],
-          });
-        }
-
-      });
-    }
-
-    /* NON-EMPLOYED VALIDATION (keep your existing) */
-    if (
-      [
-        "Benefits",
-        "Unemployed",
-        "Retired",
-        "Student",
-        "Armed Forces",
-        "Homemaker",
-        "Carer"
-      ].includes(data.employmentStatus)
-    ) {
-      if (!data.yearsInEmploymentStatus) {
+  if (
+    data.employmentStatus === "Full-time Employed" ||
+    data.employmentStatus === "Part-time Employed"
+  ) {
+    data.employmentHistory?.forEach((job, index) => {
+      if (job.yearsAtEmployment === "0" && !job.monthsAtEmployment) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Please select how long you've been in this employment status",
-          path: ["yearsInEmploymentStatus"],
+          message: "Please select months",
+          path: ["employmentHistory", index, "monthsAtEmployment"],
         });
       }
+    });
+  }
+
+  /* NON-EMPLOYED VALIDATION */
+  if (
+    [
+      "Self-employed",
+      "Benefits",
+      "Unemployed",
+      "Retired",
+      "Student",
+      "Armed Forces",
+      "Homemaker",
+      "Carer"
+    ].includes(data.employmentStatus)
+  ) {
+    if (!data.yearsInEmploymentStatus) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please select how long you've been in this employment status",
+        path: ["yearsInEmploymentStatus"],
+      });
     }
-  });
+  }
+});
 
 export type ApplyFormData = z.infer<typeof applyFormSchema>;

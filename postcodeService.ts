@@ -5,11 +5,6 @@ export interface PostcodeAddress {
   line_3: string;
   post_town: string;
   postcode: string;
-  building_name: string;
-  building_number: string;
-  thoroughfare: string;
-  dependent_thoroughfare: string;
-  sub_building_name: string;
 }
 export const lookupPostcode = async (
   postcode: string
@@ -37,11 +32,6 @@ export const lookupPostcode = async (
           addr.line_3,
           addr.post_town,
           addr.postcode,
-          addr.building_name,
-          addr.building_number,
-          addr.thoroughfare,
-          addr.dependent_thoroughfare,
-          addr.sub_building_name,
         ]
           .filter(Boolean)
           .join(", "),
@@ -50,11 +40,6 @@ export const lookupPostcode = async (
         line_3: addr.line_3,
         post_town: addr.post_town,
         postcode: addr.postcode,
-        building_name: addr.building_name,
-        building_number: addr.building_number,
-        thoroughfare: addr.thoroughfare,
-        dependent_thoroughfare: addr.dependent_thoroughfare,
-        sub_building_name: addr.sub_building_name,
       }));
     }
 

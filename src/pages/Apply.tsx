@@ -60,7 +60,10 @@ const Apply = () => {
       maritalStatus: "",
       addressHistory: [{
         postcode: "",
-        address: "",
+        buildingNumber: "",
+        buildingName: "",
+        street: "",
+        town: "",
         yearsAtAddress: "",
         monthsAtAddress: "",
       }],
@@ -101,14 +104,6 @@ const Apply = () => {
       return;
     }
    
-    // if (currentStep === 5) {
-    //   setEmploymentTouched(true);
-    // }
-
-    // if (currentStep === 11) {
-    //   setAddressTouched(true);
-    // }
-
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -118,11 +113,11 @@ const Apply = () => {
   const handleBack = () => {
     const loanAmount = form.watch("loanAmount");
 
-    if (currentStep === 3 && loanAmount !== "Under £5,000") {
-      setCurrentStep(1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
+    // if (currentStep === 3 && loanAmount !== "Under £5,000") {
+    //   setCurrentStep(1);
+    //   window.scrollTo({ top: 0, behavior: "smooth" });
+    //   return;
+    // }
 
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
@@ -156,16 +151,16 @@ const Apply = () => {
 
     if (field === "employmentStatus") {
       const isEmployed =
-        value === "Full-time Employed" ||
-        value === "Part-time Employed";
+        ["Full-time Employed", "Part-time Employed", "Self-employed"]
+          .includes(value);
 
       if (!isEmployed) {
-        // remove employment history completely
         form.setValue("employmentHistory", []);
+        form.clearErrors("employmentHistory");
+
       } else {
-        // ensure at least one row exists when employed
         form.setValue("employmentHistory", [
-          { employerName: "", jobTitle: "", yearsAtEmployment: "" }
+          { employerName: "", jobTitle: "", yearsAtEmployment: "", monthsAtEmployment: "" }
         ]);
       }
     }
@@ -179,12 +174,38 @@ const Apply = () => {
     }, 300);
   };
 
+  const getCookie = (name) => {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + '=')) {
+        return decodeURIComponent(cookie.substring(name.length + 1));
+      }
+    }
+    return null;
+  };
 
+  const fbp = getCookie("_fbp") || "";
+  const fbc = getCookie("_fbc") || "";
+
+  console.log("FBP:", fbp);
+  console.log("FBC:", fbc);
   const onSubmit = async (data: ApplyFormData) => {
     console.log("✅ onSubmit fired", data);
 
     setIsSubmitting(true);
     const formData = new FormData();
+
+    const buildAddress = (addr) =>
+      addr
+        ? [
+            addr.buildingNumber || addr.buildingName,
+            addr.street,
+            addr.town
+          ]
+            .filter(Boolean)
+            .join(", ")
+        : "";
 
     /* ======================
        LOAN
@@ -205,61 +226,85 @@ const Apply = () => {
     ====================== */
     const isEmployed =
       data.employmentStatus === "Full-time Employed" ||
+      data.employmentStatus === "Self-employed" ||
       data.employmentStatus === "Part-time Employed";
 
-    formData.append("employment_status", data.employmentStatus || "");
-    formData.append("monthly_income", data.annualIncome || "");
-    formData.append("housing_status", data.housingStatus || "");
-    formData.append("employer_phone", data.employerPhone || "N/A");
+      formData.append("employment_status", data.employmentStatus || "");
+      formData.append("monthly_income", data.annualIncome || "");
+      formData.append("housing_status", data.housingStatus || "");
+      formData.append("employer_phone", data.employerPhone || "N/A");
 
-    if (isEmployed) {
-      // Current employment
-      formData.append("employer_name",     data.employmentHistory[0]?.employerName    || "N/A");
-      formData.append("job_title",         data.employmentHistory[0]?.jobTitle        || "N/A");
-      formData.append("years_as_employed", data.employmentHistory[0]?.yearsAtEmployment || "");
-      formData.append("years_employed",    data.employmentHistory[0]?.yearsAtEmployment || "");
+      if (isEmployed) {
+        // Current employment
+        formData.append("employer_name",     data.employmentHistory[0]?.employerName    || "N/A");
+        formData.append("job_title",         data.employmentHistory[0]?.jobTitle        || "N/A");
+        formData.append("years_as_employed", data.employmentHistory[0]?.yearsAtEmployment || "");
+        formData.append("years_employed",    data.employmentHistory[0]?.yearsAtEmployment || "");
 
-      // Previous employment 1
-      formData.append("employer_name_1",     data.employmentHistory[1]?.employerName    || "");
-      formData.append("job_title_1",         data.employmentHistory[1]?.jobTitle        || "");
-      formData.append("years_as_employed_1", data.employmentHistory[1]?.yearsAtEmployment || "");
+        // Previous employment 1
+        formData.append("employer_name_1",     data.employmentHistory[1]?.employerName    || "");
+        formData.append("job_title_1",         data.employmentHistory[1]?.jobTitle        || "");
+        formData.append("years_as_employed_1", data.employmentHistory[1]?.yearsAtEmployment || "");
 
-      // Previous employment 2
-      formData.append("employer_name_2",     data.employmentHistory[2]?.employerName    || "");
-      formData.append("job_title_2",         data.employmentHistory[2]?.jobTitle        || "");
-      formData.append("years_as_employed_2", data.employmentHistory[2]?.yearsAtEmployment || "");
-    } else {
-      // Non-employed statuses
-      formData.append("employer_name",     "N/A");
-      formData.append("job_title",         "N/A");
-      formData.append("years_as_employed", data.yearsInEmploymentStatus || "");
-      formData.append("years_employed",    data.yearsInEmploymentStatus || "");
-      formData.append("employer_name_1",   "");
-      formData.append("job_title_1",       "");
-      formData.append("years_as_employed_1", "");
-      formData.append("employer_name_2",   "");
-      formData.append("job_title_2",       "");
-      formData.append("years_as_employed_2", "");
-    }
+        // Previous employment 2
+        formData.append("employer_name_2",     data.employmentHistory[2]?.employerName    || "");
+        formData.append("job_title_2",         data.employmentHistory[2]?.jobTitle        || "");
+        formData.append("years_as_employed_2", data.employmentHistory[2]?.yearsAtEmployment || "");
+      } else {
+        // Non-employed statuses
+        formData.append("employer_name",     "N/A");
+        formData.append("job_title",         "N/A");
+        formData.append("years_as_employed", data.yearsInEmploymentStatus || "");
+        formData.append("years_employed",    data.yearsInEmploymentStatus || "");
+        formData.append("employer_name_1",   "");
+        formData.append("job_title_1",       "");
+        formData.append("years_as_employed_1", "");
+        formData.append("employer_name_2",   "");
+        formData.append("job_title_2",       "");
+        formData.append("years_as_employed_2", "");
+      }
 
     /* ======================
       ADDRESS
     ====================== */
     // Current address
-    formData.append("postal_code",      data.addressHistory[0]?.postcode       || "");
-    formData.append("full_address",     data.addressHistory[0]?.address        || "");
+    const addr0 = data.addressHistory[0];
+
+    formData.append("postal_code", addr0?.postcode || "");
+    formData.append("full_address", buildAddress(addr0));
+
+    formData.append("house_number", addr0?.buildingNumber || "");
+    formData.append("building_name", addr0?.buildingName || "");
+    formData.append("street", addr0?.street || "");
+    formData.append("town", addr0?.town || "");
     formData.append("years_at_address", data.addressHistory[0]?.yearsAtAddress || "");
-    formData.append("time_at_address",  data.addressHistory[0]?.yearsAtAddress || "");
+    formData.append("time_at_address",  data.addressHistory[0]?.monthsAtAddress || "");
 
     // Previous address 1
-    formData.append("postal_code_1",      data.addressHistory[1]?.postcode       || "");
-    formData.append("full_address_1",     data.addressHistory[1]?.address        || "");
+    const addr1 = data.addressHistory[1];
+
+    formData.append("postal_code_1", addr1?.postcode || "");
+    formData.append("full_address_1", buildAddress(addr1));
+
+    formData.append("house_number_1", addr1?.buildingNumber || "");
+    formData.append("building_name_1", addr1?.buildingName || "");
+    formData.append("street_1", addr1?.street || "");
+    formData.append("town_1", addr1?.town || "");
     formData.append("years_at_address_1", data.addressHistory[1]?.yearsAtAddress || "");
+    formData.append("time_at_address_1",  data.addressHistory[1]?.monthsAtAddress || "");
 
     // Previous address 2
-    formData.append("postal_code_2",      data.addressHistory[2]?.postcode       || "");
-    formData.append("full_address_2",     data.addressHistory[2]?.address        || "");
+    const addr2 = data.addressHistory[2];
+
+    formData.append("postal_code_2", addr2?.postcode || "");
+    formData.append("full_address_2", buildAddress(addr2));
+
+    formData.append("house_number_2", addr2?.buildingNumber || "");
+    formData.append("building_name_2", addr2?.buildingName || "");
+    formData.append("street_2", addr2?.street || "");
+    formData.append("town_2", addr2?.town || "");
     formData.append("years_at_address_2", data.addressHistory[2]?.yearsAtAddress || "");
+    formData.append("time_at_address_2",  data.addressHistory[2]?.monthsAtAddress || "");
 
     /* ======================
        PERSONAL
@@ -275,8 +320,6 @@ const Apply = () => {
     formData.append("phone", data.employerPhone || "");
     formData.append("marital_status", data.maritalStatus || "");
 
-
-
     /* ======================
        CONSENTS
     ====================== */
@@ -290,8 +333,12 @@ const Apply = () => {
     /* ======================
        META
     ====================== */
+    const fbp = getCookie("_fbp") || "";
+    const fbc = getCookie("_fbc") || "";
     formData.append("source", "web");
     formData.append("ip_address", "127.0.0.1");
+    formData.append("fbp", fbp);
+    formData.append("fbc", fbc);
 
     /* ======================
        SECOND API JSON PAYLOAD
@@ -312,7 +359,8 @@ const Apply = () => {
 
           Employments: isEmployed
             ? data.employmentHistory.map(emp => ({
-                MonthlyIncome: data.annualIncome,
+                // MonthlyIncome: data.annualIncome,
+                NetMonthlyIncome:data.annualIncome,
                 EmploymentStatus: mapEmploymentStatus(data.employmentStatus),
                 JobTitle: emp.jobTitle || "",
                 Employer: emp.employerName || "",
@@ -324,7 +372,8 @@ const Apply = () => {
               }))
             : [
                 {
-                  MonthlyIncome: data.annualIncome,
+                  // MonthlyIncome: data.annualIncome,
+                  NetMonthlyIncome:data.annualIncome,
                   EmploymentStatus: mapEmploymentStatus(data.employmentStatus),
                   JobTitle: "",
                   Employer: "",
@@ -335,9 +384,10 @@ const Apply = () => {
 
           Addresses: data.addressHistory.map((addr, index) => ({
             ResidentialStatus: index === 0 ? mapHousingStatus(data.housingStatus) : "",
-            Building: "",
-            Street: addr.address || "",
-            Town: "",
+            Building: addr.buildingName || "",
+            BuildingNumber: addr.buildingNumber || "",
+            Street: addr.street || "",
+            Town: addr.town || "",
             District: "",
             County: "",
             Postcode: addr.postcode || "",
@@ -346,7 +396,6 @@ const Apply = () => {
              addr.yearsAtAddress === "0"
                     ? addr.monthsAtAddress || "0"
                     : "0",
-            BuildingNumber: "",
             CountryAlphaCode: getCountryCode(),
             DependentLocality: ""
           })),
@@ -363,7 +412,9 @@ const Apply = () => {
       Registration: null,
       LoanAmount: Number(data.loanAmount) || 0,
       LoanTerm: 0,
-      LenderQuestionAnswers: null
+      LenderQuestionAnswers: null,
+      fbp: fbp,
+      fbc: fbc,
     };
 
     try {
@@ -448,13 +499,32 @@ const Apply = () => {
 
   const handleSelectAddress = (address: PostcodeAddress) => {
     const addressHistory = form.getValues("addressHistory");
+    const line1 = address.line_1 || "";
+    const line2 = address.line_2 || "";
+    const line3 = address.line_3 || "";
+
+    const parts = [line1, line2, line3].filter(Boolean);
+
+
     addressHistory[currentAddressIndex] = {
       postcode: address.postcode,
-      address: address.formatted_address,
+      buildingNumber: address.building_number || "",
+      street:
+        address.thoroughfare ||
+        parts[1] ||
+        parts[0] ||
+        "",
+      town: address.post_town || "",
+      buildingName:
+        address.building_name ||
+        (!address.building_number ? parts[0] : ""),
       yearsAtAddress: addressHistory[currentAddressIndex]?.yearsAtAddress || "",
+      monthsAtAddress: addressHistory[currentAddressIndex]?.monthsAtAddress || "",
     };
 
     form.setValue("addressHistory", addressHistory, { shouldValidate: true });
+
+    setAddressDialogOpen(false);
 
     toast({
       title: "Address Selected",
@@ -466,7 +536,15 @@ const Apply = () => {
     const currentAddresses = form.getValues("addressHistory");
     form.setValue("addressHistory", [
       ...currentAddresses,
-      { postcode: "", address: "", yearsAtAddress: "" }
+      {
+        postcode: "",
+        buildingNumber: "",
+        buildingName: "",
+        street: "",
+        town: "",
+        yearsAtAddress: "",
+        monthsAtAddress: "",
+      }
     ]);
   };
 
@@ -540,7 +618,12 @@ const Apply = () => {
     const current = form.getValues("employmentHistory");
     form.setValue("employmentHistory", [
       ...current,
-      { employerName: "", jobTitle: "", yearsAtEmployment: "" }
+      {
+        employerName: "",
+        jobTitle: "",
+        yearsAtEmployment: "",
+        monthsAtEmployment: "",
+      },
     ]);
   };
 
@@ -555,25 +638,25 @@ const Apply = () => {
   };
 
   const isStepValid = () => {
-    const values = form.getValues();
+    // const values = form.getValues();
+    const values = form.watch();
     const errors = form.formState.errors;
 
     switch (currentStep) {
       case 1:
         const amount = values.loanAmount;
         return typeof amount === "number" && amount >= 4000 && !errors.loanAmount;
-      case 2:
-        return values.loanAmount !== "Under £5,000" ||
-          (values.loanAmountSpecific !== "" &&
-           values.loanAmountSpecific !== "Under £1,000" &&
-           !errors.loanAmountSpecific);
+      // case 2:
+      //   return values.loanAmount !== "Under £5,000" ||
+      //     (values.loanAmountSpecific !== "" &&
+      //      values.loanAmountSpecific !== "Under £1,000" && !errors.loanAmountSpecific);
       case 3:
         return values.vehicleType !== "" && !errors.vehicleType;
       case 4:
         return values.employmentStatus !== "" && !errors.employmentStatus;
       case 5: {
         const empStatus = values.employmentStatus;
-        if (empStatus === "Full-time Employed" || empStatus === "Part-time Employed") {
+        if (empStatus === "Full-time Employed" || empStatus === "Part-time Employed" || empStatus === "Self-employed") {
           const empHistory = values.employmentHistory;
           const allFilled = empHistory.every(emp =>
             emp.employerName !== "" && emp.jobTitle !== "" && emp.yearsAtEmployment !== ""
@@ -596,7 +679,11 @@ const Apply = () => {
       case 11: {
         const addressHistory = values.addressHistory;
         const allFilled = addressHistory.every(addr =>
-          addr.postcode !== "" && addr.address !== "" && addr.yearsAtAddress !== ""
+          addr.postcode !== "" &&
+          addr.buildingNumber !== "" &&
+          addr.street !== "" &&
+          addr.town !== "" &&
+          addr.yearsAtAddress !== ""
         );
         return allFilled && getTotalAddressYears() >= 3;
       }
@@ -708,7 +795,7 @@ const Apply = () => {
                 )}
 
                 {/* Step 2: Specific Loan Amount */}
-                {currentStep === 2 && form.watch("loanAmount") === "Under £5,000" && (
+                {/* {currentStep === 2 && form.watch("loanAmount") === "Under £5,000" && (
                   <div className="space-y-4 md:space-y-10">
                     <div className="text-center">
                       <h1 className="font-comic text-2xl md:text-4xl lg:text-5xl text-black mb-3 md:mb-6">
@@ -744,7 +831,7 @@ const Apply = () => {
                       </div>
                     )}
                   </div>
-                )}
+                )} */}
 
                 {/* Step 3: Vehicle Type */}
                 {currentStep === 3 && (
@@ -833,8 +920,8 @@ const Apply = () => {
                 {/* Step 5: Employment Details */}
                 {currentStep === 5 && (
                   <div className="space-y-4 md:space-y-10">
-                    {(form.watch("employmentStatus") === "Full-time Employed" ||
-                      form.watch("employmentStatus") === "Part-time Employed") ? (
+                    {(["Full-time Employed", "Part-time Employed", "Self-employed"]
+                        .includes(form.watch("employmentStatus"))) ? (
                       <>
                         <div className="text-center">
                           <h1 className="font-comic text-2xl md:text-4xl lg:text-5xl text-black mb-3 md:mb-6">
@@ -1400,27 +1487,90 @@ const Apply = () => {
                             )}
                           />
 
-                          <FormField
-                            control={form.control}
-                            name={`addressHistory.${index}.address`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="font-comic text-sm md:text-base text-black">Full Address *</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    onChange={(e) => {
-                                      field.onChange(e);
-                                    }}
-                                    className="font-body text-base md:text-base p-3 md:p-4 border-2 border-black w-full"
-                                    placeholder="123 Main Street, London"
-                                  />
-                                </FormControl>
-                                <FormMessage className="text-destructive text-xs" />
-                              </FormItem>
-                            )}
-                          />
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
+                            {/* Building Number */}
+                            <FormField
+                              control={form.control}
+                              name={`addressHistory.${index}.buildingNumber`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="font-comic text-sm text-black">
+                                    Building / House No *
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      placeholder=""
+                                      className="border-2 border-black"
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+
+                            {/* Building Name */}
+                            <FormField
+                              control={form.control}
+                              name={`addressHistory.${index}.buildingName`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="font-comic text-sm text-black">
+                                    Building Name
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      placeholder=""
+                                      className="border-2 border-black"
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+
+                            {/* Street */}
+                            <FormField
+                              control={form.control}
+                              name={`addressHistory.${index}.street`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="font-comic text-sm text-black">
+                                    Street *
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      placeholder=""
+                                      className="border-2 border-black"
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+
+                            {/* Town */}
+                            <FormField
+                              control={form.control}
+                              name={`addressHistory.${index}.town`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="font-comic text-sm text-black">
+                                    Town *
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      placeholder=""
+                                      className="border-2 border-black"
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+
+                          </div>
+                          
                           <FormField
                             control={form.control}
                             name={`addressHistory.${index}.yearsAtAddress`}
