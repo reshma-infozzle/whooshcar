@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Car, Shield, Calculator, Clock, CheckCircle, Percent } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 
 // --------------------------------------------------
@@ -175,6 +176,12 @@ const CarFinance = () => {
   // FINAL UI
   // --------------------------------------------------
   return (
+    <>
+    <Helmet>
+      <title>Car Finance UK Deals & Loans |  Whoosh Car Finance</title>
+      <meta name="description" content="Find the best car finance deals in the UK. Easy applications, low monthly payments, and options available for all credit types including self-employed." />
+    </Helmet>
+    
     <div className="min-h-screen bg-background">
       <Header />
 
@@ -368,6 +375,7 @@ const CarFinance = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

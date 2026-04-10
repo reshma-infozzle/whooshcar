@@ -13,6 +13,7 @@ import {
   Truck,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const BusinessFinance = () => {
   const [data, setData] = useState(null);
@@ -222,6 +223,12 @@ const BusinessFinance = () => {
   const operatingLease = parseIntroAndList(data.operating_lease_description);
 
   return (
+    <>
+    <Helmet>
+      <title>Business Vehicle Finance UK |  Whoosh Car Finance</title>
+      <meta name="description" content="Flexible business vehicle finance solutions for UK companies. Manage cash flow, access fleet options, and benefit from tailored finance packages." />
+    </Helmet>
+    
     <div className="min-h-screen bg-background">
       <Header />
 
@@ -628,6 +635,7 @@ const BusinessFinance = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

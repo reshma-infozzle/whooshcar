@@ -28,6 +28,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 /* -------------------------------------------------------------------------- */
 /*                                   TYPES                                    */
@@ -243,6 +244,11 @@ const Contact = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Vehicle Finance Assistance UK |  Whoosh Car Finance</title>
+        <meta name="description" content="Get assistance with vehicle finance applications and support from experts. Speak to a team ready to help you explore suitable finance options." />
+      </Helmet>
+      
       <Header />
 
       <main className="pt-24">

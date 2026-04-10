@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Car, Zap, Shield, Users, Award, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 // -----------------------------
 // SHIMMER COMPONENTS (NO BORDER)
@@ -133,6 +134,12 @@ const AboutUs = () => {
   // REAL CONTENT (BORDERS KEPT)
   // -----------------------------
   return (
+    <>
+    <Helmet>
+        <title>Car Finance Broker in UK |  Whoosh Car Finance</title>
+        <meta name="description" content="A trusted car finance broker connecting you with lenders across the UK. Explore transparent services and suitable finance options with expert guidance." />
+      </Helmet>
+    
     <div className="min-h-screen bg-background">
       <Header />
 
@@ -363,6 +370,7 @@ const AboutUs = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

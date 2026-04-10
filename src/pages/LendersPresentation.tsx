@@ -99,174 +99,175 @@ export default function LendersPresentation() {
   return (
     <>
       <Helmet>
-        <title>{page.buisness_plan_title} | WHOOSH Finance</title>
+        <title>Car Finance Lenders UK | Whoosh Car Finance</title>
+        <meta name="description" content="Access trusted car finance lenders across the UK. Compare options, explore flexible terms, and find suitable finance solutions through a reliable network." />
       </Helmet>
 
       <Header />
 
       <main className="container mx-auto px-4 py-16 space-y-20">
 
-{/* HERO CARD */}
-<section className="pt-28 pb-24">
-  <div
-    className="
-      max-w-[1080px]
-      mx-auto
-      border-[4px] border-black
-      shadow-[3px_3px_0_#000]
-      rounded-[22px]
-      bg-white
-      px-[56px]
-      py-[52px]
-    "
-  >
-    {/* BADGE */}
-    <div className="flex justify-center mb-7">
-      <span
-        className="
-          inline-flex items-center gap-2
-          rounded-full
-          bg-[#CFF6E3]
-          px-5 py-[10px]
-          text-[14px]
-          font-semibold
-          text-black
-        "
-      >
-        <span
-          className="
-            w-[18px] h-[18px]
-            rounded-[4px]
-            border-2 border-black
-            flex items-center justify-center
-          "
-        >
-          <span className="w-[6px] h-[6px] bg-black rounded-sm" />
-        </span>
-        {page.buisness_plan_title}
-      </span>
-    </div>
+        {/* HERO CARD */}
+        <section className="pt-28 pb-24">
+          <div
+            className="
+              max-w-[1080px]
+              mx-auto
+              border-[4px] border-black
+              shadow-[3px_3px_0_#000]
+              rounded-[22px]
+              bg-white
+              px-[56px]
+              py-[52px]
+            "
+          >
+            {/* BADGE */}
+            <div className="flex justify-center mb-7">
+              <span
+                className="
+                  inline-flex items-center gap-2
+                  rounded-full
+                  bg-[#CFF6E3]
+                  px-5 py-[10px]
+                  text-[14px]
+                  font-semibold
+                  text-black
+                "
+              >
+                <span
+                  className="
+                    w-[18px] h-[18px]
+                    rounded-[4px]
+                    border-2 border-black
+                    flex items-center justify-center
+                  "
+                >
+                  <span className="w-[6px] h-[6px] bg-black rounded-sm" />
+                </span>
+                {page.buisness_plan_title}
+              </span>
+            </div>
 
-    {/* TITLE */}
-    <div
-      className="
-        text-center
-        font-comic
-        font-black
-        uppercase
-        tracking-[0.04em]
-        text-[46px] md:text-[58px]
-        leading-tight
-        text-[#F4C400]
-        mb-7
-      "
-      dangerouslySetInnerHTML={{ __html: page.finance_business_title }}
-    />
+            {/* TITLE */}
+            <div
+              className="
+                text-center
+                font-comic
+                font-black
+                uppercase
+                tracking-[0.04em]
+                text-[46px] md:text-[58px]
+                leading-tight
+                text-[#F4C400]
+                mb-7
+              "
+              dangerouslySetInnerHTML={{ __html: page.finance_business_title }}
+            />
 
-    {/* DESCRIPTION */}
-    <p
-      className="
-        text-center
-        max-w-3xl
-        mx-auto
-        text-[17px]
-        leading-relaxed
-        text-gray-700
-        mb-14
-      "
-    >
-      {page.finance_business_description}
-    </p>
+            {/* DESCRIPTION */}
+            <p
+              className="
+                text-center
+                max-w-3xl
+                mx-auto
+                text-[17px]
+                leading-relaxed
+                text-gray-700
+                mb-14
+              "
+            >
+              {page.finance_business_description}
+            </p>
 
-    {/* FEATURE CARDS */}
-    <div className="grid md:grid-cols-3 gap-7 mb-14">
-      {/* Growth */}
-      <div className="bg-[#FFFBEA] rounded-[14px] p-7">
-        <TrendingUp className="w-[22px] h-[22px] text-[#F4C400] mb-3" />
-        <h3 className="font-extrabold text-[18px] mb-2">
-          {page.growth_title}
-        </h3>
-        <p className="text-[15px] leading-relaxed text-gray-700">
-          {page.growth_title_description}
-        </p>
-      </div>
+            {/* FEATURE CARDS */}
+            <div className="grid md:grid-cols-3 gap-7 mb-14">
+              {/* Growth */}
+              <div className="bg-[#FFFBEA] rounded-[14px] p-7">
+                <TrendingUp className="w-[22px] h-[22px] text-[#F4C400] mb-3" />
+                <h3 className="font-extrabold text-[18px] mb-2">
+                  {page.growth_title}
+                </h3>
+                <p className="text-[15px] leading-relaxed text-gray-700">
+                  {page.growth_title_description}
+                </p>
+              </div>
 
-      {/* FCA */}
-      <div className="bg-[#FFFBEA] rounded-[14px] p-7">
-        <ShieldCheck className="w-[22px] h-[22px] text-[#F4C400] mb-3" />
-        <h3 className="font-extrabold text-[18px] mb-2">
-          {page.fca_title}
-        </h3>
-        <p className="text-[15px] leading-relaxed text-gray-700">
-          {page.fca_description}
-        </p>
-      </div>
+              {/* FCA */}
+              <div className="bg-[#FFFBEA] rounded-[14px] p-7">
+                <ShieldCheck className="w-[22px] h-[22px] text-[#F4C400] mb-3" />
+                <h3 className="font-extrabold text-[18px] mb-2">
+                  {page.fca_title}
+                </h3>
+                <p className="text-[15px] leading-relaxed text-gray-700">
+                  {page.fca_description}
+                </p>
+              </div>
 
-      {/* Partnership */}
-      <div className="bg-[#FFFBEA] rounded-[14px] p-7">
-        <Handshake className="w-[22px] h-[22px] text-[#F4C400] mb-3" />
-        <h3 className="font-extrabold text-[18px] mb-2">
-          {page.partnership_title}
-        </h3>
-        <p className="text-[15px] leading-relaxed text-gray-700">
-          {page.partnership_description}
-        </p>
-      </div>
-    </div>
+              {/* Partnership */}
+              <div className="bg-[#FFFBEA] rounded-[14px] p-7">
+                <Handshake className="w-[22px] h-[22px] text-[#F4C400] mb-3" />
+                <h3 className="font-extrabold text-[18px] mb-2">
+                  {page.partnership_title}
+                </h3>
+                <p className="text-[15px] leading-relaxed text-gray-700">
+                  {page.partnership_description}
+                </p>
+              </div>
+            </div>
 
-    {/* CTA BUTTONS */}
-    <div className="flex justify-center gap-5">
-      <a href={page.become_parter_button_url}>
-        <button
-          className="
-            flex items-center gap-2
-    h-[50px]
-    px-7
-    bg-[#F4C400]
-    border-[3px] border-black
-    rounded-[10px]
-    font-comic font-black
-    text-[16px]
-    tracking-[0.01em]
-    shadow-[3px_3px_0_#000]
-    hover:translate-y-[1px]
-    hover:shadow-[2px_2px_0_#000]
-    transition
+            {/* CTA BUTTONS */}
+            <div className="flex justify-center gap-5">
+              <a href={page.become_parter_button_url}>
+                <button
+                  className="
+                    flex items-center gap-2
+            h-[50px]
+            px-7
+            bg-[#F4C400]
+            border-[3px] border-black
+            rounded-[10px]
+            font-comic font-black
+            text-[16px]
+            tracking-[0.01em]
+            shadow-[3px_3px_0_#000]
+            hover:translate-y-[1px]
+            hover:shadow-[2px_2px_0_#000]
+            transition
 
-          "
-        >
-          <Handshake className="w-[16px] h-[16px]" />
-          {page.become_parter_button_text}
-        </button>
-      </a>
+                  "
+                >
+                  <Handshake className="w-[16px] h-[16px]" />
+                  {page.become_parter_button_text}
+                </button>
+              </a>
 
-      <a href={page.download_full_button_url}>
-        <button
-          className="
-          flex items-center gap-2
-    h-[50px]
-    px-7
-    bg-white
-    border-[3px] border-black
-    rounded-[10px]
-    font-comic font-black
-    text-[16px]
-    tracking-[0.01em]
-    shadow-[3px_3px_0_#000]
-    hover:bg-[#CFF6E3]
-    hover:translate-y-[1px]
-    hover:shadow-[2px_2px_0_#000]
-    transition
+              <a href={page.download_full_button_url}>
+                <button
+                  className="
+                  flex items-center gap-2
+            h-[50px]
+            px-7
+            bg-white
+            border-[3px] border-black
+            rounded-[10px]
+            font-comic font-black
+            text-[16px]
+            tracking-[0.01em]
+            shadow-[3px_3px_0_#000]
+            hover:bg-[#CFF6E3]
+            hover:translate-y-[1px]
+            hover:shadow-[2px_2px_0_#000]
+            transition
 
-          "
-        >
-          <Download className="w-[16px] h-[16px]" />
-          {page.download_full_button_text}
-        </button>
-      </a>
-    </div>
-  </div>
-</section>
+                  "
+                >
+                  <Download className="w-[16px] h-[16px]" />
+                  {page.download_full_button_text}
+                </button>
+              </a>
+            </div>
+          </div>
+        </section>
 
       
 

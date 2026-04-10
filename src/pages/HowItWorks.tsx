@@ -13,6 +13,7 @@ import {
   Calculator,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 // ---------- Types ----------
 interface WhyChooseFeature {
@@ -250,6 +251,11 @@ const HowItWorks: React.FC = () => {
     ) || [];
 
   return (
+    <>
+    <Helmet>
+      <title>How Vehicle Finance Works UK |  Whoosh Car Finance</title>
+      <meta name="description" content="Learn how the vehicle finance process works step by step. Apply online, compare offers, and get approved quickly with a simple process." />
+    </Helmet> 
     <div className="min-h-screen bg-background">
       <Header />
 
@@ -483,6 +489,7 @@ const HowItWorks: React.FC = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

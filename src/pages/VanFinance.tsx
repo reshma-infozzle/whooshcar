@@ -13,6 +13,7 @@ import {
   CheckCircle,
   Package,
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 interface VanTypeItem {
   vans: string;
@@ -230,6 +231,11 @@ const VanFinance = () => {
   const ctaHeadingPlain = getPlainText(data.van_finance_quote_title);
 
   return (
+    <>
+    <Helmet>
+      <title>Van Finance UK for Business & Self Employed |  Whoosh Car Finance</title>
+      <meta name="description" content="Get van finance options for businesses and self-employed individuals. Enjoy flexible terms, easy approvals, and affordable monthly payments." />
+    </Helmet> 
     <div className="min-h-screen bg-background">
       <Header />
 
@@ -612,6 +618,7 @@ const VanFinance = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

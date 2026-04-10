@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 // -------------------- SHIMMER --------------------
 const Shimmer = () => (
@@ -85,6 +86,12 @@ const BadCreditFinance = () => {
   ];
 
   return (
+    <>
+    <Helmet>
+      <title>Car Finance for Poor Credit Score |  Whoosh Car Finance</title>
+      <meta name="description" content="Get car finance options even with a poor credit score. Explore zero deposit deals, flexible terms, and solutions designed for all credit situations." />
+    </Helmet>
+    
     <div className="min-h-screen bg-background">
       <Header />
 
@@ -223,106 +230,107 @@ const BadCreditFinance = () => {
 
             <div className="grid md:grid-cols-3 gap-8 text-center demo">
 
-  {/* SUPPORT YOU */}
-  <div className="comic-panel bg-white p-8 border-4 border-black flex flex-col items-center">
-    <img
-      src="/supprt.png"
-      alt="Support you"
-      className="h-12 w-12 mb-4"
-    />
-    <h3 className="text-xl font-comic mb-2">
-      {data.support_you_title}
-    </h3>
-    <p className="text-black/70">
-      {data.support_you_description}
-    </p>
-  </div>
+            {/* SUPPORT YOU */}
+            <div className="comic-panel bg-white p-8 border-4 border-black flex flex-col items-center">
+              <img
+                src="/supprt.png"
+                alt="Support you"
+                className="h-12 w-12 mb-4"
+              />
+              <h3 className="text-xl font-comic mb-2">
+                {data.support_you_title}
+              </h3>
+              <p className="text-black/70">
+                {data.support_you_description}
+              </p>
+            </div>
 
-  {/* GET YOU MOVING */}
-  <div className="comic-panel bg-white p-8 border-4 border-black flex flex-col items-center">
-    <img
-      src="/car.png"
-      alt="Get you moving"
-      className="h-12 w-12 mb-4"
-    />
-    <h3 className="text-xl font-comic mb-2">
-      {data.get_moving_title}
-    </h3>
-    <p className="text-black/70">
-      {data.get_moving_description}
-    </p>
-  </div>
+            {/* GET YOU MOVING */}
+            <div className="comic-panel bg-white p-8 border-4 border-black flex flex-col items-center">
+              <img
+                src="/car.png"
+                alt="Get you moving"
+                className="h-12 w-12 mb-4"
+              />
+              <h3 className="text-xl font-comic mb-2">
+                {data.get_moving_title}
+              </h3>
+              <p className="text-black/70">
+                {data.get_moving_description}
+              </p>
+            </div>
 
-  {/* WORK FAST */}
-  <div className="comic-panel bg-white p-8 border-4 border-black flex flex-col items-center">
-    <img
-      src="/star.png"
-      alt="Work fast"
-      className="h-12 w-12 mb-4"
-    />
-    <h3 className="text-xl font-comic mb-2">
-      {data.work_fast_title}
-    </h3>
-    <p className="text-black/70">
-      {data.work_fast_description}
-    </p>
-  </div>
+            {/* WORK FAST */}
+            <div className="comic-panel bg-white p-8 border-4 border-black flex flex-col items-center">
+              <img
+                src="/star.png"
+                alt="Work fast"
+                className="h-12 w-12 mb-4"
+              />
+              <h3 className="text-xl font-comic mb-2">
+                {data.work_fast_title}
+              </h3>
+              <p className="text-black/70">
+                {data.work_fast_description}
+              </p>
+            </div>
 
-</div>
+          </div>
 
           </div>
         </section>
 
         {/* CTA SECTION */}
-<section className="py-12">
-  <div className="container mx-auto px-4 text-center">
-    <div className="comic-panel bg-secondary/20 p-8 border-4 border-black shadow-comic-lg">
+        <section className="py-12">
+          <div className="container mx-auto px-4 text-center">
+            <div className="comic-panel bg-secondary/20 p-8 border-4 border-black shadow-comic-lg">
 
-      <h2
-        className="hero-text text-4xl font-comic text-black mb-6"
-        dangerouslySetInnerHTML={{ __html: data.bad_credit_hold_title }}
-      />
+              <h2
+                className="hero-text text-4xl font-comic text-black mb-6"
+                dangerouslySetInnerHTML={{ __html: data.bad_credit_hold_title }}
+              />
 
-      <p className="text-xl text-black/80 font-body mb-8 max-w-2xl mx-auto">
-        {data.bad_credit_hold_description}
-      </p>
+              <p className="text-xl text-black/80 font-body mb-8 max-w-2xl mx-auto">
+                {data.bad_credit_hold_description}
+              </p>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
 
-        {/* CHECK MY SUPER OPTIONS BUTTON */}
-        <Link to={data.super_options_button_url}>
-          <Button
-            size="lg"
-            className="font-bold text-lg shadow-[4px_4px_0px_rgb(0_0_0_/_1)] flex items-center gap-2"
-          >
-            <Heart className="w-5 h-5" />
-            {data.super_options_button_text}
-          </Button>
-        </Link>
+                {/* CHECK MY SUPER OPTIONS BUTTON */}
+                <Link to={data.super_options_button_url}>
+                  <Button
+                    size="lg"
+                    className="font-bold text-lg shadow-[4px_4px_0px_rgb(0_0_0_/_1)] flex items-center gap-2"
+                  >
+                    <Heart className="w-5 h-5" />
+                    {data.super_options_button_text}
+                  </Button>
+                </Link>
 
-        {/* SPEAK TO OUR HEROES BUTTON */}
-        <Link to={data.speak_button_url}>
-          <Button
-            size="lg"
-            variant="secondary"
-            className="font-bold text-xl shadow-[4px_4px_0px_rgb(0_0_0_/_1)] flex items-center gap-2"
-          >
-            <Users className="w-6 h-6" />
-            {data.speak_button_text}
-          </Button>
-        </Link>
+                {/* SPEAK TO OUR HEROES BUTTON */}
+                <Link to={data.speak_button_url}>
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="font-bold text-xl shadow-[4px_4px_0px_rgb(0_0_0_/_1)] flex items-center gap-2"
+                  >
+                    <Users className="w-6 h-6" />
+                    {data.speak_button_text}
+                  </Button>
+                </Link>
 
-      </div>
+              </div>
 
-    </div>
-  </div>
-</section>
+            </div>
+          </div>
+        </section>
 
 
       </main>
 
       <Footer />
     </div>
+    </>
   );
 };
 

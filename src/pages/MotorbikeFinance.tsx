@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bike, Zap, Calculator, Users, CheckCircle, Wind } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const API_URL = "https://admin.whooshcarfinance.co.uk/api/MotorFinance";
 
@@ -223,6 +224,12 @@ const MotorbikeFinance = () => {
   const motorcycleTypes = (data.motorcycle_types || []).map((m) => m.motorbike);
 
   return (
+    <>
+    <Helmet>
+          <title>Motorbike Finance UK Deals |  Whoosh Car Finance</title>
+          <meta name="description" content="Explore motorbike finance deals with flexible terms and low deposits. Suitable for all riders, from beginners to experienced bikers." />
+        </Helmet> 
+    
     <div className="min-h-screen bg-background">
       <Header />
 
@@ -626,6 +633,7 @@ const MotorbikeFinance = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

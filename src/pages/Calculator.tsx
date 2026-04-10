@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calculator as CalculatorIcon, Car, Zap, TrendingUp, Info } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 interface LoanTermOption {
   loan_term_options_value: string;
@@ -181,6 +182,7 @@ const Calculator = () => {
   // shimmer version of the whole page
   if (loading) {
     return (
+  
       <div className="min-h-screen bg-background">
         <Header />
         <main className="pt-24">
@@ -305,6 +307,12 @@ const Calculator = () => {
 
   // real content
   return (
+    <>
+    <Helmet>
+        <title>Car Finance Calculator UK |  Whoosh Car Finance</title>
+        <meta name="description" content="Use the car finance calculator to estimate monthly payments and total costs. Get instant results and plan your finance with confidence." />
+      </Helmet>
+    
     <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-24">
@@ -655,6 +663,7 @@ const Calculator = () => {
       </main>
       <Footer />
     </div>
+    </>
   );
 };
 

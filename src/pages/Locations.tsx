@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const API_URL = "https://admin.whooshcarfinance.co.uk/api/locations";
 
@@ -48,6 +49,7 @@ type LocationsPageData = {
 
 // Shimmer skeleton for full page
 const Shimmer = () => (
+
   <div className="min-h-screen bg-background halftone-dots-yellow relative">
     <Header />
     <ScrollToTop />
@@ -196,6 +198,12 @@ export default function Locations() {
   const locations = pageData!.locations ?? [];
 
   return (
+    <>
+    <Helmet>
+      <title>Vehicle Finance Broker in UK Locations |  Whoosh Car Finance</title>
+      <meta name="description" content="Find vehicle finance options across multiple UK locations. Get fast approvals, compare deals, and access support wherever you are." />
+    </Helmet> 
+    
     <div className="min-h-screen bg-background halftone-dots-yellow relative">
       <Header />
       <ScrollToTop />
@@ -440,5 +448,6 @@ export default function Locations() {
 
       <Footer />
     </div>
+    </>
   );
 }
